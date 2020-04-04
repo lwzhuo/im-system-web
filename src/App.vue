@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <transition>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    </transition>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
 </script>
 
 <style>
