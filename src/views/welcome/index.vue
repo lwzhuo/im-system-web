@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="title">IM</div>
+    <div class="title">IM System</div>
     <div class="content">未选择频道</div>
   </div>
 </template>

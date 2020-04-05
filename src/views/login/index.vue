@@ -1,8 +1,47 @@
 <template>
-  
+  <div class="login-page-container">
+    <div class="login-container">
+      <el-form :model="loginForm" :rules="rules" ref="loginForm" autoComplete="on" label-position="left">
+        <div class="login-header">
+          <div class="login-title-container"><strong class="login-title">IM System</strong></div>
+          <div class="profile-image"></div>
+        </div>
+        <div class="login-content">
+          <el-form-item prop="username">
+            <el-input placeholder="用户名" prefix-icon="el-icon-third-my_light" v-model="loginForm.username" autoComplete="on" autofocus="autofocus" @focus="clearValidate"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" placeholder="密码" prefix-icon="el-icon-third-lock" v-model="loginForm.password" @keyup.enter.native="doLogin"></el-input>          
+          </el-form-item>        
+          <el-button class="login-button" type="primary" :loading="loadingVisible" @click.native.prevent="doLogin">登录</el-button>
+        </div>
+        <div class="login-footer">
+          <a href="#" @click="openRegisterDialog()">没有账号，立即注册</a>
+        </div>
+      </el-form>
+    </div>
+    <register-user ref="registerUser" @onRegisterSuccessed="onRegisterSuccessed"></register-user>
+  </div>
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      loadingVisible: false,
+      loginForm: {
+        username: '',
+        password: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        password: [{ required: true, message: '请输入口令', trigger: 'blur' }]
+      }
+    }
+  },
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
