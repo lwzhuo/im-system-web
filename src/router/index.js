@@ -35,6 +35,7 @@ router.beforeEach((to, from, next) => {
     data:{
       userId:1,
       username:'admin',
+      nickname:'admin',
       firstLetterOfName:'a',
       avatarUrl:null,
       token:'1234qwer'
