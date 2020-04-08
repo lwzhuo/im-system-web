@@ -15,16 +15,19 @@
           </el-form-item>        
           <el-button class="login-button" type="primary" :loading="loadingVisible" @click.native.prevent="doLogin">登录</el-button>
         </div>
-        <div class="login-footer">
+        <!-- <div class="login-footer">
           <a href="#" @click="openRegisterDialog()">没有账号，立即注册</a>
-        </div>
+        </div> -->
       </el-form>
     </div>
-    <register-user ref="registerUser" @onRegisterSuccessed="onRegisterSuccessed"></register-user>
+    <!-- <register-user ref="registerUser" @onRegisterSuccessed="onRegisterSuccessed"></register-user> -->
   </div>
 </template>
 
 <script>
+import { outputError } from '@/utils/exception'
+import { login } from '@/api/auth'
+
 export default {
   data() {
     return {
@@ -41,6 +44,80 @@ export default {
       }
     }
   },
+  methods: {
+    // 清除校验
+    clearValidate() {
+      this.$refs['loginForm'].clearValidate()
+    },
+    // 打开注册弹窗
+    openRegisterDialog() {
+      this.$refs.registerUser.$emit('openDialog')
+    },
+    // 注册成功回调
+    onRegisterSuccessed(username, password) {
+      this.loginForm.username = username
+      this.loginForm.password = password
+      this.doLogin()
+    },
+    // 登录主函数
+    doLogin() {
+      this.loadingVisible = true
+      this.$refs['loginForm'].validate(valid => {
+        if (valid) {
+          login(this.loginForm.username, this.loginForm.password)
+          .then(response => {
+            if(response.data.code==-101){
+              this.loadingVisible = false
+              this.$message({
+                showClose: true,
+                message: '登录失败，请检查用户名或口令是否正确！',
+                type: 'error'
+              })
+              return
+            }else if(response.data.code!=0){
+              this.loadingVisible = false
+              this.$message({
+                showClose: true,
+                message: '服务异常['+response.code+']',
+                type: 'error'
+              })
+              return
+            }else{
+              let responseData = response.data.data;
+              sessionStorage.setItem('currentUser', JSON.stringify({
+                id: responseData.uid,
+                username: responseData.username,
+                firstLetterOfName: responseData.firstLetterOfName,
+                avatarUrl: responseData.avatarUrl,
+              }))
+              sessionStorage.setItem('token', responseData.token)
+              this.loadingVisible = false
+              let redirect = decodeURIComponent(
+                this.$route.query.redirect || "/"
+              )
+              this.$router.push(redirect)
+            }
+          })
+          .catch(error => {
+            this.loadingVisible = false
+            if(error.response && error.response.code != 200) {
+              this.$message({
+                showClose: true,
+                message: '服务异常',
+                type: 'error'
+              })
+              return
+            }
+            outputError(this, error)
+          })
+        }
+      })
+      this.loadingVisible = false
+    }
+  },
+  components: { 
+    RegisterUser: resolve => require(['@/components/user/register'], resolve)
+  }
 }
 </script>
 

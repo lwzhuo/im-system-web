@@ -32,7 +32,7 @@
             </div> -->
           </div>
         </span>
-        <h4 class="nickname">{{ userInfo.nickname }}</h4>
+        <h4 class="username">{{ userInfo.username }}</h4>
         <!-- <a class="dropdown-icon" title="主菜单">
           <el-dropdown trigger="click" @command="handleCommand">
             <span>
@@ -113,7 +113,7 @@ export default {
       userInfo: {
         id: currentUser.id,
         firstLetterOfName: currentUser.firstLetterOfName.toUpperCase(),
-        nickname: currentUser.nickname,
+        username: currentUser.username,
         avatarUrl: currentUser.avatarUrl
       },
       onlineStatus: 'online',
@@ -125,6 +125,17 @@ export default {
     }
   },
   methods: {
+  },
+  computed: {
+      realAvatarUrl() {
+      if(this.userInfo.avatarUrl == null || this.userInfo.avatarUrl.trim() === '') {
+        return null
+      }
+      if(!this.userInfo.avatarUrl.startsWith('http:') && !this.userInfo.avatarUrl.startsWith('https:')) {
+        return process.env.BASE_API + '/users/' + this.userInfo.id + '/avatar?width=36&height=36&rdm=' + Math.random()
+      }
+      return this.userInfo.avatarUrl + (this.userInfo.avatarUrl.indexOf('?') > -1 ? '&' : '?') + 'rdm=' + Math.random()
+    }
   },
   beforeCreate() {
   },
@@ -244,7 +255,7 @@ export default {
     .status-selector:hover > .status-edit {
       display: inherit;
     }
-    .nickname {
+    .username {
       color: #fff;
       padding-top: 4px;
       margin-left: 6px;
