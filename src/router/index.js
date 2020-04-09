@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import LoginView from '@/views/login/index' // 登录页
 import IndexView from '@/views/home/index' // 主页
 import WelcomeView from '@/views/welcome/index' // 欢迎页
+import TestView from '@/views/test' // 测试
 Vue.use(Router)
 
 const router = new Router({
@@ -25,6 +26,12 @@ const router = new Router({
           component:WelcomeView
         }
       ]
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: TestView,
+      meta:{requiresAuth:false}
     }
   ]
 })

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" width="500px" v-loading="loadingVisible" @open="handleDialogOpen()">
+  <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" width="500px" v-loading="loadingVisible" @open="handleDialogOpen()">
     <div slot="title" class="dialog-header"><h3>注册用户</h3></div>
     <el-form :model="userModel" :rules="formRules" class="el-dialog-form"
       ref="userForm" label-width="80px" label-position="right" size="small">
@@ -12,15 +12,15 @@
       <el-form-item label="确认密码" prop="checkPassword">
         <el-col :span="16"><el-input type="password" :maxlength="16" v-model="userModel.checkPassword" auto-complete="off"></el-input></el-col>
       </el-form-item>
-      <el-form-item label="验证码" prop="verificationCode">
+      <!-- <el-form-item label="验证码" prop="verificationCode">
         <el-col :span="16">
           <el-input class="vc-input" v-model="userModel.verificationCode" placeholder="请输入验证码"></el-input>
           <div class="vc" @click="getVerificationCode()">{{ this.verificationCode }}</div>
         </el-col>
-      </el-form-item> 
+      </el-form-item>  -->
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+      <el-button size="small" @click="closeDialog()">取 消</el-button>
       <el-button type="primary" size="small" @click="doRegister()">确 定</el-button>
     </span>
   </el-dialog>
@@ -67,19 +67,15 @@ export default {
       dialogVisible: false,
       userModel: {
         name: '',
-        nickname: '',
         password: '',
         checkPassword: '',
         verificationCode: ''
       },
       verificationCode: '',
+      // 格式校验规则
       formRules: {
         name: [
           { required: true, message: '请输入用户名称', trigger: 'blur' },
-          { min: 3, max: 32, message: '长度在 3 到 16 个字符', trigger: 'blur' }
-        ],        
-        nickname: [
-          { required: true, message: '请输入昵称', trigger: 'blur' },
           { min: 3, max: 32, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         password: [
@@ -96,21 +92,43 @@ export default {
     }
   },
   methods: {
+    // 处理注册框打开逻辑
+    // 由于Vue是异步执行dom更新，使用nextTick回调，进行更新后的dom操作
     handleDialogOpen() {
-      this.getVerificationCode()
+      // this.getVerificationCode()
       this.$nextTick(() => {
         this.$refs['username'].focus()
       })
     },
+    // 执行注册逻辑
     doRegister() {
       this.$refs['userForm'].validate((valid) => {
         if (valid) {
           this.loadingVisible = true
-          registerUser(this.userModel)
+          registerUser(this.userModel.name,this.userModel.password)
           .then(response => {
             this.loadingVisible = false
+            let responseCode = response.data.code
+            // 处理错误逻辑
+            if(responseCode===-100){
+              this.$message({
+                showClose: true,
+                message: '注册失败,用户名已经被注册',
+                type: 'error'
+              })
+              return
+            }else if(responseCode!=0){
+              this.$message({
+                showClose: true,
+                message: '服务异常',
+                type: 'error'
+              })
+              return
+            }
+
+            // 注册成功
             this.dialogVisible = false
-            this.$emit('onRegisterSuccessed',
+            this.$emit('onRegisterSuccessed',// 注册成功 register子组件使用$emit向父组件触发事件
               this.userModel.name,
               this.userModel.password
             )       
@@ -124,6 +142,7 @@ export default {
         }
       })
     },
+    // 获取验证码
     getVerificationCode() {
       this.loadingVisible = true
       getVerificationCode()
@@ -135,8 +154,21 @@ export default {
         this.loadingVisible = false
         outputError(this, error)        
       })
+    },
+    // 关闭对话框
+    closeDialog(){
+      this.dialogVisible = false
+      this.userModel.name = ''
+      this.userModel.password = ''
+      this.userModel.checkPassword = ''
+      this.userModel.verificationCode = ''
+    },
+    handleClose(done) {
+      this.closeDialog()
+      done()
     }
   },
+  // 显示注册框
   mounted: function() {
     this.$nextTick(() => {
       this.$on('openDialog', function(action) {

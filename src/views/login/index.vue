@@ -15,12 +15,12 @@
           </el-form-item>        
           <el-button class="login-button" type="primary" :loading="loadingVisible" @click.native.prevent="doLogin">登录</el-button>
         </div>
-        <!-- <div class="login-footer">
+        <div class="login-footer">
           <a href="#" @click="openRegisterDialog()">没有账号，立即注册</a>
-        </div> -->
+        </div>
       </el-form>
     </div>
-    <!-- <register-user ref="registerUser" @onRegisterSuccessed="onRegisterSuccessed"></register-user> -->
+    <register-user ref="registerUser" @onRegisterSuccessed="onRegisterSuccessed"></register-user>
   </div>
 </template>
 
