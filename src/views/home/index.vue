@@ -125,6 +125,25 @@ export default {
     }
   },
   methods: {
+    onPrivateChannelCreated(channel) {
+      this.selectedChannelId = channel.channelId
+      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 'P' }})
+      for(let userChannel of this.userChannelList) {
+        if(userChannel.channelId === channel.channelId) {
+          return
+        }
+      }
+      this.userChannelList.unshift(channel)
+      if(this.userChannelList.length > USER_CHANNEL_LIST_SIZE) {
+        this.userChannelList.pop()
+      }
+    },
+    openCreatePrivateChannelDlg() {
+      this.$refs.createPrivateChanneDlg.$emit('openDialog', 'add')
+    },
+    openCreateGroupChannelDlg() {
+      this.$refs.createGroupChanneDlg.$emit('openDialog', 'add')
+    },
   },
   computed: {
       realAvatarUrl() {
@@ -145,6 +164,9 @@ export default {
     } else {
       this.$router.push({ name: 'welcome' })
     }
+  },
+  components: { 
+    CreatePrivateChannel: resolve => require(['@/components/channel/createPrivateChannel'], resolve)
   }
 }
 </script>

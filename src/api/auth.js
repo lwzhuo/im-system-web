@@ -4,7 +4,7 @@ import qs from 'qs'
 export const login = (username, password) =>
     request({
         url: '/auth/login',
-        method: 'post',
+        method: 'POST',
         header:{'Content-Type':'application/json'},
         data: {
             "username":username,
