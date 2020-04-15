@@ -3,7 +3,7 @@ import axios from 'axios'
 // 创建axios实例
 const service = axios.create({
     // api的base_url
-    baseURL: "http://localhost:8080",
+    baseURL: "http://localhost:8080", //todo 配置文件
     // 请求超时时间
     timeout: 5000,
     // 允许携带cookie

@@ -105,7 +105,9 @@
 </template>
 
 <script>
-
+import { listUserChannels, getUserChannel} from '@/api/channel'
+import { IMClient } from '@/im_client/im_client'
+const USER_CHANNEL_LIST_SIZE = 16 // todo 配置文件
 export default {
   data() {
     let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
@@ -144,6 +146,28 @@ export default {
     openCreateGroupChannelDlg() {
       this.$refs.createGroupChanneDlg.$emit('openDialog', 'add')
     },
+    initIMClient() {
+      let wsUrl = "ws://localhost:8000?token=" + sessionStorage.getItem('token') // todo 配置文件
+      const imClient = new IMClient(wsUrl, 30 * 1000)
+      this.$store.dispatch('setIMClient', imClient)
+      imClient.connect(this.bindToGroupChannel)
+    },
+    bindToGroupChannel(imClient) {
+      let groupIds = ''
+      for(let channel of this.userChannelList) {
+        if(channel.channelType === 'G') {
+          groupIds += channel.channelId + ','
+        }
+      }
+      if(groupIds !== '') {
+        groupIds = groupIds.substr(0, groupIds.length - 1)
+        let message = {
+          action: 'BIND_GROUP_CHANNEL',
+          groupIds: groupIds
+        }
+        imClient.send(JSON.stringify(message))
+      }
+    },
   },
   computed: {
       realAvatarUrl() {
@@ -157,6 +181,17 @@ export default {
     }
   },
   beforeCreate() {
+    // 初始化工作
+    let userId = JSON.parse(sessionStorage.getItem('currentUser')).id
+    listUserChannels(userId, USER_CHANNEL_LIST_SIZE)
+    .then(response => {
+      // this.userChannelList = response.data
+      console.log(response.data)
+      this.initIMClient()
+    })
+    .catch(error => {
+      console.error(error)
+    })
   },
   created() {
     if(this.$route.params.channelId) {
