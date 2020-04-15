@@ -40,7 +40,9 @@ export class IMClient {
         if (this.conn && this.conn.readyState === 1) {
           let echoMsg = {
             action:1,
-            fromUid:this.currentUser.id
+            msg:"echo",
+            fromUid:this.currentUser.id,
+            msgType:1
           }
           this.conn.send(JSON.stringify(echoMsg))
         }
@@ -82,9 +84,10 @@ export class IMClient {
 
   onOpen() {
     let registerMsg = {
-      action:3,
+      action:3, // todo 配置文件
       msg:"hello",
-      fromUid:this.currentUser.id
+      fromUid:this.currentUser.id,
+      msgType:1 // 配置文件
     }
     this.send(JSON.stringify(registerMsg));
     if(this.connectCallback != null) {
