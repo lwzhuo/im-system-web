@@ -87,12 +87,11 @@ export default {
       this.showLoading = true
       let currentUser = JSON.parse(sessionStorage.getItem("currentUser"))
       let channel = {
-        type: 'P',
-        fromUsername: currentUser.name,
-        fromUserNickname: currentUser.nickname,
-        toUserId: this.selectedUser.id,
-        toUsername: this.selectedUser.name,
-        toUserNickname: this.selectedUser.nickname
+        channelType: 1,
+        creatorId: currentUser.id,
+        attenderId: this.selectedUser.uid,
+        channelUserList:[
+        ]
       }
       createChannel(channel)
       .then(response => {

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 创建channel
 export const createChannel = (channel) =>
     request({
-        url: '/channel/',
+        url: '/channel/create',
         method: 'post',
         data: channel
     })
