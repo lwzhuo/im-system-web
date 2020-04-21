@@ -95,7 +95,7 @@ export default {
       }
       createChannel(channel)
       .then(response => {
-        this.$emit('onChannelCreated', response.data)
+        this.$emit('onChannelCreated', response.data.data)
         this.showLoading = false
         Object.assign(this.$data, this.$options.data())
         this.dialogVisible = false

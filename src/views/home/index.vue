@@ -129,12 +129,15 @@ export default {
   methods: {
     onPrivateChannelCreated(channel) {
       this.selectedChannelId = channel.channelId
+      // 执行跳转
       this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 'P' }})
+      // 在当前已有的channel列表中查找channelid
       for(let userChannel of this.userChannelList) {
         if(userChannel.channelId === channel.channelId) {
           return
         }
       }
+      // 将新的对话插入到列表开头
       this.userChannelList.unshift(channel)
       if(this.userChannelList.length > USER_CHANNEL_LIST_SIZE) {
         this.userChannelList.pop()
@@ -183,11 +186,10 @@ export default {
   beforeCreate() {
     // 初始化工作
     let userId = JSON.parse(sessionStorage.getItem('currentUser')).id
-    listUserChannels(userId, USER_CHANNEL_LIST_SIZE)
+    listUserChannels(userId, USER_CHANNEL_LIST_SIZE) // 获取当前用户的channel列表 todo
     .then(response => {
       // this.userChannelList = response.data
-      console.log(response.data)
-      this.initIMClient()
+      this.initIMClient()// 初始化ws客户端
     })
     .catch(error => {
       console.error(error)

@@ -6,6 +6,7 @@ import WelcomeView from '@/views/welcome/index' // 欢迎页
 import TestView from '@/views/test' // 测试
 Vue.use(Router)
 
+const MessageDialog = resolve => require(['@/components/dialog/messageDialog'], resolve)
 const router = new Router({
   routes: [
     {
@@ -20,6 +21,11 @@ const router = new Router({
       component: IndexView,
       meta:{requiresAuth:true},
       children:[
+        {
+          path: 'messages/messageChat/:channelId',
+          name: 'messageDialog',
+          component: MessageDialog
+        },
         {
           path:'welcome',
           name:'welcome',
