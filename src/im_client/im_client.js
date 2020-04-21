@@ -42,7 +42,7 @@ export class IMClient {
             action:1,
             msg:"echo",
             fromUid:this.currentUser.id,
-            msgType:1
+            msgType:3
           }
           this.conn.send(JSON.stringify(echoMsg))
         }
@@ -87,7 +87,7 @@ export class IMClient {
       action:3, // todo 配置文件
       msg:"hello",
       fromUid:this.currentUser.id,
-      msgType:1 // 配置文件
+      msgType:3 // 配置文件
     }
     this.send(JSON.stringify(registerMsg));
     if(this.connectCallback != null) {
