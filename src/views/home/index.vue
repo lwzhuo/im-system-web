@@ -58,7 +58,7 @@
             <button class="add-channel-btn" title="创建群聊" @click="openCreateGroupChannelDlg">+</button>
             <create-group-channel ref="createGroupChanneDlg" @onChannelCreated="onGroupChannelCreated"></create-group-channel>
           </li>
-          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 'G'" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
+          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 2" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
             <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType, leaveChannelCallback: leaveChannelCallback, removeChannelCallback: removeChannelCallback }}">
               <a href="#">
                 <div class="status">
@@ -76,7 +76,7 @@
             <button class="add-channel-btn" title="创建私聊" @click="openCreatePrivateChannelDlg">+</button>
             <create-private-channel ref="createPrivateChanneDlg" @onChannelCreated="onPrivateChannelCreated"></create-private-channel>
           </li>
-          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 'P'" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
+          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 1" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
             <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType }}">
               <div class="has-close">
                 <div class="status">
@@ -130,7 +130,7 @@ export default {
     onPrivateChannelCreated(channel) {
       this.selectedChannelId = channel.channelId
       // 执行跳转
-      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 'P' }})
+      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 1 }})
       // 在当前已有的channel列表中查找channelid
       for(let userChannel of this.userChannelList) {
         if(userChannel.channelId === channel.channelId) {
@@ -158,7 +158,7 @@ export default {
     bindToGroupChannel(imClient) {
       let groupIds = ''
       for(let channel of this.userChannelList) {
-        if(channel.channelType === 'G') {
+        if(channel.channelType === 2) {
           groupIds += channel.channelId + ','
         }
       }

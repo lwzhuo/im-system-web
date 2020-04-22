@@ -97,14 +97,29 @@ export default {
       }
       this.loadingVisible = true
       const newMessage = {
+        action:5,
+        fromUid:JSON.parse(sessionStorage.getItem('currentUser')).id,
+        msgType:1,
         channelId: this.channelId,
         channelType: this.channelType,
-        content: this.message.replace(new RegExp("\n", "gm"), "<br />")
+        msg: this.message.replace(new RegExp("\n", "gm"), "<br />"),
+        ts:Date.parse(new Date())
       }
       saveMessage(newMessage)
       .then(response => {
+        if(response.data.code!=0){
+          this.$message({
+                showClose: true,
+                message: '服务异常['+response.code+']',
+                type: 'error'
+              })
+              return
+        }
+        emitData = {
+          
+        }
         this.message = ''
-        this.$emit('onMessageSent', response.data)
+        this.$emit('onMessageSent', response.data) // 发送消息触发事件 展示发送的消息
         this.loadingVisible = false
       })
       .catch(error => {

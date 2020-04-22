@@ -132,7 +132,7 @@ export default {
       })
     },
     getToUserId() {
-      if(this.userChannel.channelType === 'G') {
+      if(this.userChannel.channelType === 2) {
         return null
       }
       return this.userChannel.toUserId

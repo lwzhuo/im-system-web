@@ -13,7 +13,7 @@ export const listMessage = (channelId, maxCreateAt, limit) =>
 
 export const saveMessage = (message) =>
     request({
-        url: '/messages',
+        url: '/message/send',
         method: 'POST',
         data: message
     })
