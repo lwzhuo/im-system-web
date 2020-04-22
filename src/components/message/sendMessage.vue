@@ -102,8 +102,7 @@ export default {
         msgType:1,
         channelId: this.channelId,
         channelType: this.channelType,
-        msg: this.message.replace(new RegExp("\n", "gm"), "<br />"),
-        ts:Date.parse(new Date())
+        msg: this.message.replace(new RegExp("\n", "gm"), "<br />")
       }
       saveMessage(newMessage)
       .then(response => {
@@ -116,7 +115,7 @@ export default {
               return
         }
         emitData = {
-          
+
         }
         this.message = ''
         this.$emit('onMessageSent', response.data) // 发送消息触发事件 展示发送的消息
