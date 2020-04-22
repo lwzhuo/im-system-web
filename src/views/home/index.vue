@@ -5,7 +5,8 @@
         <span id="status-dropdown">
           <div class="avatar status-selector">
             <img v-if="realAvatarUrl" :src="realAvatarUrl">
-            <span v-else>{{ userInfo.firstLetterOfName }}</span>
+            <!-- <span v-else>{{ userInfo.firstLetterOfName }}</span> 暂时使用默认头像--> 
+            <span v-else style="width: 32px; height:32px;"><img class="status-wrapper-image" src="../../assets/images/avatar.png" /></span>
             <!-- <span class="status">
               <div class="icon-container">
                 <status-online-avatar v-if="onlineStatus === 'online'"></status-online-avatar>

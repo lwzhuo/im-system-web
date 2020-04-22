@@ -7,7 +7,8 @@
         <div class="message">
           <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.senderId === '00000000000000000000000000000000'}">
             <div v-if="item.senderRealAvatarUrl" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
-            <template v-else>{{ item.senderFirstLetterOfName.toUpperCase() }}</template>
+            <!-- <template v-else>{{ item.senderFirstLetterOfName.toUpperCase() }}</template> -->
+            <template v-else style="width: 32px; height:32px;"><img class="status-wrapper-image" src="../../assets/images/avatar.png" /></template>
             <div v-if="item.senderId != '00000000000000000000000000000000'" class="online-status-container">
               <status-online-avatar v-if="item.senderOnlineStatus === 'online'"></status-online-avatar>
               <status-away-avatar v-else-if="item.senderOnlineStatus === 'away'"></status-away-avatar>
