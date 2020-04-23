@@ -1,16 +1,17 @@
 import request from '@/utils/request'
 
-export const listMessage = (channelId, maxCreateAt, limit) =>
+// 加载消息
+export const listMessage = (channelId, maxCreateAt, size) =>
     request({
-        url: '/messages',
+        url: '/message/'+channelId,
         method: 'GET',
         params: {
-            channelId: channelId,
             maxCreateAt: maxCreateAt,
-            limit: limit
+            size: size
         }
     })
 
+// 发送消息
 export const saveMessage = (message) =>
     request({
         url: '/message/send',
@@ -18,6 +19,7 @@ export const saveMessage = (message) =>
         data: message
     })
 
+// 设置消息已读
 export const readMessage = (channelId, total) =>
     request({
         url: '/messages/read',
@@ -28,6 +30,7 @@ export const readMessage = (channelId, total) =>
         }
     })
 
+// 删除消息
 export const removeMessage = (messageId, channelId, toUserId) =>
     request({
         url: '/messages',
