@@ -23,7 +23,7 @@
           <div class="message-content" :class="{ 'message-content-myself': myId == item.fromUid }">
             <span class="sender">{{ item.fromUserName ? item.fromUserName :memberInfo[item.fromUid].username }}</span>
             <span class="createAt">{{ getCreateDateTime(item) }}</span>
-            <span v-if="myId == item.fromUid" class="delete-message" @click="removeMessage(item.id, index)">删除</span>
+            <!-- <span v-if="myId == item.fromUid" class="delete-message" @click="removeMessage(item.id, index)">删除</span> -->
             <!-- 处理不同的消息类型 文本 图片 文件 -->
             <div v-if="item.msgType === 1" :class="[{'content-select': myId == item.fromUid, 'content': myId !== item.fromUid}, {'system-content': item.channelType==3}]" v-text="item.msg"></div>
             <template v-else>
@@ -86,14 +86,15 @@ export default {
         if(responseData.length > 0) {
           this.messageList = [...responseData.reverse(), ...this.messageList]
           this.maxCreateAt = this.messageList[0].ts
-          readMessage(this.channelId, responseData.length) // 将消息设为已读
-          .then(response => {
-            this.loadingVisible = false
-          })
-          .catch(error => {
-            this.loadingVisible = false
-            outputError(this, error)
-          })            
+          // readMessage(this.channelId, responseData.length) // 将消息设为已读 todo
+          // .then(response => {
+          //   this.loadingVisible = false
+          // })
+          // .catch(error => {
+          //   this.loadingVisible = false
+          //   outputError(this, error)
+          // })      
+          this.loadingVisible = false      
         } else {
           this.loadingVisible = false
         }

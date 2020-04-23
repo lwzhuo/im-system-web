@@ -3,7 +3,7 @@
     <div class="toolbar">
       <emoji-panel id="emoji_panel" v-show="emojiPanelVisible" v-on:select-emoticon="selectEmoticon"></emoji-panel>
       <a class="face" title="表情" @click="displayEmojiPanel" v-clickOutside="handleCloseEmojiPanel"></a>
-      <el-upload
+      <!-- <el-upload
         class="upload"
         ref="fileUpload"
         :action="uploadFileUrl"
@@ -15,7 +15,7 @@
         :before-upload="beforeFileUpload"
         :on-success="fileUploadSuccess">
         <a class="folder" title="图片和文件"></a>
-      </el-upload>      
+      </el-upload>       -->
     </div>
     <div class="content-container">
       <textarea class="custom-textarea custom-textarea--emoji-picker" id="post_textbox" ref="message_content"
