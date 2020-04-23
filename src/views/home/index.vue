@@ -128,6 +128,7 @@ export default {
     }
   },
   methods: {
+    // 创建私聊channel
     onPrivateChannelCreated(channel) {
       this.selectedChannelId = channel.channelId
       // 执行跳转
@@ -140,6 +141,7 @@ export default {
       }
       // 将新的对话插入到列表开头
       this.userChannelList.unshift(channel)
+      // 列表超过USER_CHANNEL_LIST_SIZE长度限制 推出最后一个列表
       if(this.userChannelList.length > USER_CHANNEL_LIST_SIZE) {
         this.userChannelList.pop()
       }
@@ -150,6 +152,7 @@ export default {
     openCreateGroupChannelDlg() {
       this.$refs.createGroupChanneDlg.$emit('openDialog', 'add')
     },
+    // 初始化websocket客户端
     initIMClient() {
       let wsUrl = "ws://localhost:8000?token=" + sessionStorage.getItem('token') // todo 配置文件
       const imClient = new IMClient(wsUrl, 30 * 1000)

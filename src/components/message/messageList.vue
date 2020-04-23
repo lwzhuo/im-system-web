@@ -5,22 +5,27 @@
     <div :id="'message_' + item.id" v-for="(item, index) in this.messageList" :key="item.id">
       <div class="message-container">
         <div class="message">
-          <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.senderId === '00000000000000000000000000000000'}">
+          <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.fromUid === '00000000000000000000000000000000'}">
+            <!-- 用户头像显示 -->
             <div v-if="item.senderRealAvatarUrl" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
             <!-- <template v-else>{{ item.senderFirstLetterOfName.toUpperCase() }}</template> -->
             <template v-else style="width: 32px; height:32px;"><img class="status-wrapper-image" src="../../assets/images/avatar.png" /></template>
-            <div v-if="item.senderId != '00000000000000000000000000000000'" class="online-status-container">
-              <status-online-avatar v-if="item.senderOnlineStatus === 'online'"></status-online-avatar>
+            <!-- 用户在线状态显示 -->
+            <div v-if="item.fromUid != '00000000000000000000000000000000'" class="online-status-container">
+              <!-- 状态暂时写死离线 -->
+              <status-offline-avatar></status-offline-avatar>
+              <!-- <status-online-avatar v-if="item.senderOnlineStatus === 'online'"></status-online-avatar>
               <status-away-avatar v-else-if="item.senderOnlineStatus === 'away'"></status-away-avatar>
               <status-offline-avatar v-else-if="item.senderOnlineStatus === 'offline'"></status-offline-avatar>
-              <status-dnd-avatar v-else="item.senderOnlineStatus === 'dnd'"></status-dnd-avatar>
+              <status-dnd-avatar v-else="item.senderOnlineStatus === 'dnd'"></status-dnd-avatar> -->
             </div>
           </div>
-          <div class="message-content" :class="{ 'message-content-myself': myId == item.senderId }">
-            <span class="sender">{{ item.senderNickname ? item.senderNickname : item.senderName }}</span>
+          <div class="message-content" :class="{ 'message-content-myself': myId == item.fromUid }">
+            <span class="sender">{{ item.fromUserName ? item.fromUserName : item.fromUserName }}</span>
             <span class="createAt">{{ getCreateDateTime(item) }}</span>
-            <span v-if="myId == item.senderId" class="delete-message" @click="removeMessage(item.id, index)">删除</span>
-            <div v-if="item.fileSize === 0" :class="[{'content-select': myId == item.senderId, 'content': myId !== item.senderId}, {'system-content': item.type}]" v-html="item.content"></div>
+            <span v-if="myId == item.fromUid" class="delete-message" @click="removeMessage(item.id, index)">删除</span>
+            <!-- 处理不同的消息类型 文本 图片 文件 -->
+            <div v-if="item.msgType === 1" :class="[{'content-select': myId == item.fromUid, 'content': myId !== item.fromUid}, {'system-content': item.channelType==3}]" v-html="item.msg"></div>
             <template v-else>
               <div v-if="isImage(item.fileExtension)"><img class="image-file" @click="viewImage(getFileUrl(item.filePath, item.fileName, item.fileMimeType), item.imageWidth, item.imageHeight)" :width="item.imageThumbWidth" :height="item.imageThumbHeight" :src="getFileUrl(item.filePath + '/thumb', item.fileName, item.fileMimeType)"></div>
               <div v-else-if="isGif(item.fileExtension)"><img class="image-file" @click="viewImage(getFileUrl(item.filePath, item.fileName, item.fileMimeType), item.imageWidth, item.imageHeight)" :width="item.imageWidth" :height="item.imageHeight" :src="getFileUrl(item.filePath, item.fileName, item.fileMimeType)"></div>
@@ -101,10 +106,10 @@ export default {
       if('http://'.startsWith(message.senderRealAvatarUrl.toLowerCase()) || 'https://'.startsWith(message.senderRealAvatarUrl.toLowerCase())) {
         return message.senderRealAvatarUrl
       }
-      return process.env.BASE_API + '/users/' + message.senderId + '/avatar?width=32&height=32'
+      return process.env.BASE_API + '/users/' + message.fromUid + '/avatar?width=32&height=32'
     },
     getCreateDateTime(message) {
-      return new Date(message.createAt).toLocaleString()
+      return new Date(message.ts).toLocaleString()
     },  
     showSentMessage(message) {
       this.isLoadMore = false
@@ -140,7 +145,7 @@ export default {
     },
     onNewMessage(message) {
       this.isLoadMore = false
-      if(this.channelId === message.channelId && this.myId !== message.senderId) {
+      if(this.channelId === message.channelId && this.myId !== message.fromUid) {
         this.messageList.push(message)
       }
     },
@@ -152,7 +157,7 @@ export default {
     },
     onUserOnlineStatusChanged(receiveMessage) {
       for(let message of this.messageList) {
-        if(message.senderId === receiveMessage.userId) {
+        if(message.fromUid === receiveMessage.userId) {
           message.senderOnlineStatus = receiveMessage.onlineStatus
         }
       }
@@ -160,8 +165,8 @@ export default {
     onMessageRemoved(receiveMessage) {
       if(this.messageList != null && this.messageList.length > 0) {
         let messageId = receiveMessage.messageId
-        let senderId = receiveMessage.senderId
-        if(senderId === this.myId) {
+        let fromUid = receiveMessage.fromUid
+        if(fromUid === this.myId) {
           return
         }
         let index = 0

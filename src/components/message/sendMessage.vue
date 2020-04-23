@@ -114,11 +114,8 @@ export default {
               })
               return
         }
-        emitData = {
-
-        }
         this.message = ''
-        this.$emit('onMessageSent', response.data) // 发送消息触发事件 展示发送的消息
+        this.$emit('onMessageSent', response.data.data) // 发送消息触发事件 展示发送的消息
         this.loadingVisible = false
       })
       .catch(error => {
