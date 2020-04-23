@@ -55,7 +55,7 @@
     </div>
     <div class="body-container" v-if="$store.getters.imClient">
       <div class="body">
-        <message-list ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel"></message-list>
+        <message-list ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel" :member-info="memberInfo"></message-list>
       </div>
     </div>
     <div class="footer">
@@ -77,10 +77,12 @@ export default {
   data() {
     return {
       loadingVisible: false,
-      userChannel: {},
+      userChannel: {},  // 维护channel的信息
+      memberInfo:{},    // 维护channel的用户列表 使用uid作为key进行访问
       sentMessage: null,
       isAdmin: false,
-      myId: JSON.parse(sessionStorage.getItem('currentUser')).id
+      myId: JSON.parse(sessionStorage.getItem('currentUser')).id,
+      myName: JSON.parse(sessionStorage.getItem('currentUser')).username
     }
   },
   methods: {
@@ -100,7 +102,7 @@ export default {
       getUserChannel(this.myId, channelId) // 获取当前channel信息
       .then(response => {   
         this.userChannel = response.data.data
-        // 群聊特殊处理
+        // 群聊逻辑处理
         if (this.userChannel.channelType === 2) {
           isAdmin(channelId)
           .then(response => {
@@ -111,8 +113,17 @@ export default {
             this.loadingVisible = false
             outputError(this, error)
           })          
-        } else {
+        } else if(this.userChannel.channelType==1){
+          // 私聊逻辑处理
+          let fromUid = this.myId
+          let fromUserName = this.myName
+          let toUid = this.userChannel.attenderId
+          let toUserName = this.userChannel.attenderName
+          this.memberInfo[fromUid] = {username:fromUserName}
+          this.memberInfo[toUid] = {username:toUserName}
           this.loadingVisible = false
+        }else{
+          outputError(this, "服务异常")
         }
       })
       .catch(error => {

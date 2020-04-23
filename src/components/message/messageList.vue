@@ -57,7 +57,7 @@ import StatusAwayAvatar from '@/components/svg/statusAwayAvatar'
 
 export default {
   name: "message-list",
-  props: ['channelId', 'userChannel'],
+  props: ['channelId', 'userChannel','memberInfo'],
   data() {
     return {
       myId: JSON.parse(sessionStorage.getItem('currentUser')).id,

@@ -22,7 +22,7 @@ const router = new Router({
       meta:{requiresAuth:true},
       children:[
         {
-          path: 'messages/messageChat/:channelId',
+          path: 'messages/messageChat/:channelType/:channelId',
           name: 'messageDialog',
           component: MessageDialog
         },
