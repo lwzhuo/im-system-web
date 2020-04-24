@@ -181,11 +181,12 @@ export default {
         }
       }
     },
+    // 初始化页面
     initPage(newVal, oldVal) {
       if(newVal == null || newVal === '') {
         return
       }
-      this.maxCreateAt = 0
+      this.maxCreateAt = new Date().getTime()
       this.messageList = []
       this.getMessageList(false)
     },

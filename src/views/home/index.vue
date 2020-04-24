@@ -86,9 +86,9 @@
                   <status-offline-icon v-else-if="item.toUserOnlineStatus === 'offline'"></status-offline-icon>
                   <status-dnd-icon v-else="item.toUserOnlineStatus === 'dnd'"></status-dnd-icon>
                 </div>
-                <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelDisplayName }}</div>
-                <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div>
-                <span class="btn-close" @click="doHideChannel(item.channelId)">×</span>
+                <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
+                <!-- <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div> -->
+                <!-- <span class="btn-close" @click="doHideChannel(item.channelId)">×</span> -->
               </div>
             </router-link>
           </li>
@@ -152,6 +152,9 @@ export default {
     openCreateGroupChannelDlg() {
       this.$refs.createGroupChanneDlg.$emit('openDialog', 'add')
     },
+    selectChannel(channel, index) {
+      this.selectedChannelId = channel.channelId
+    },
     // 初始化websocket客户端
     initIMClient() {
       let wsUrl = process.env.WEBSOCKET_URL+"?token=" + sessionStorage.getItem('token') // todo 配置文件
@@ -190,9 +193,9 @@ export default {
   beforeCreate() {
     // 初始化工作
     let userId = JSON.parse(sessionStorage.getItem('currentUser')).id
-    listUserChannels(userId, USER_CHANNEL_LIST_SIZE) // 获取当前用户的channel列表 todo
+    listUserChannels(userId, USER_CHANNEL_LIST_SIZE)
     .then(response => {
-      // this.userChannelList = response.data
+      this.userChannelList = response.data.data
       this.initIMClient()// 初始化ws客户端
     })
     .catch(error => {
