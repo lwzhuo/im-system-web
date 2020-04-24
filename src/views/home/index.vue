@@ -154,7 +154,7 @@ export default {
     },
     // 初始化websocket客户端
     initIMClient() {
-      let wsUrl = "ws://localhost:8000?token=" + sessionStorage.getItem('token') // todo 配置文件
+      let wsUrl = process.env.WEBSOCKET_URL+"?token=" + sessionStorage.getItem('token') // todo 配置文件
       const imClient = new IMClient(wsUrl, 30 * 1000)
       this.$store.dispatch('setIMClient', imClient)
       imClient.connect(this.bindToGroupChannel)
