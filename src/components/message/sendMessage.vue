@@ -92,6 +92,14 @@ export default {
   directives: { clickOutside },
   methods: {
     doSendMessage() {
+      if(this.message.length>300){
+        this.$message({
+          showClose: true,
+          message: '文本过长,无法发送',
+          type: 'error'
+        })
+        return
+      }
       if(this.message.trim() === '') {
         return
       }
