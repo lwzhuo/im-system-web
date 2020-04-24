@@ -1,3 +1,4 @@
+import actionMap from './actionMap'
 export class IMClient {
   constructor(url,heartChecknterval) {
     this.url = url
@@ -154,7 +155,7 @@ export class IMClient {
           this.handleAvatarChanged(message)
         }
         break
-      case "NEW_MESSAGE":
+      case actionMap.NEW_MESSAGE:
         if (this.handleNewMessage) {
           this.handleNewMessage(message)
         }
