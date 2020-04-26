@@ -194,12 +194,12 @@ export default {
     },
   },
   computed: {
-      realAvatarUrl() {
+    realAvatarUrl() {
       if(this.userInfo.avatarUrl == null || this.userInfo.avatarUrl.trim() === '') {
         return null
       }
       if(!this.userInfo.avatarUrl.startsWith('http:') && !this.userInfo.avatarUrl.startsWith('https:')) {
-        return process.env.BASE_API + '/users/' + this.userInfo.id + '/avatar?width=36&height=36&rdm=' + Math.random()
+        return process.env.BASE_API + '/user/avatar/get/' + this.userInfo.id + '/'+this.userInfo.avatarUrl
       }
       return this.userInfo.avatarUrl + (this.userInfo.avatarUrl.indexOf('?') > -1 ? '&' : '?') + 'rdm=' + Math.random()
     }

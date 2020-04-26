@@ -130,13 +130,15 @@ export default {
           let myAvatarUrl = responseData.avatarUrl
           if(myAvatarUrl != null && myAvatarUrl.trim() !== '') {
             // 显示默认头像
-            this.myInfoModel.avatarUrl = myAvatarUrl
+            this.myInfoModel.avatarUrl = process.env.BASE_API + '/user/avatar/get/' + responseData.uid + '/'+myAvatarUrl
             // 另外一个版本的默认头像 使用的是字母
             // myAvatarUrl = myAvatarUrl.toLowerCase()
             // if(!myAvatarUrl.startsWith('http:') && !myAvatarUrl.startsWith('https:')) {
             //   const userId = JSON.parse(sessionStorage.getItem('currentUser')).id
             //   this.myInfoModel.avatarUrl = process.env.BASE_API + '/users/' + userId + '/avatar?width=80&height=80&rdm=' + Math.random()
             // }
+          }else{
+            this.myInfoModel.avatarUrl = myAvatarUrl
           }
           this.dialogVisible = true
         })

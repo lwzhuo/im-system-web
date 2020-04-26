@@ -117,14 +117,21 @@ export default {
             this.loadingVisible = false
             outputError(this, error)
           })          
-        } else if(this.userChannel.channelType==1){
+        } else if(this.userChannel.channelType==1 && this.userChannel.channelUserList!=null){
           // 私聊逻辑处理
-          let fromUid = this.myId
-          let fromUserName = this.myName
-          let toUid = this.userChannel.attenderId
-          let toUserName = this.userChannel.attenderName
-          this.memberInfo[fromUid] = {username:fromUserName}
-          this.memberInfo[toUid] = {username:toUserName}
+          for(let i=0;i<this.userChannel.channelUserList.length;i++){
+            let item = this.userChannel.channelUserList[i]
+            let uid = item.uid;
+            this.memberInfo[uid] = {
+              uid:uid,
+              username:item.userName,
+              avatarUrl:item.avatarUrl,
+              joinTime:item.joinTime,
+              leftTime:item.leftTime,
+              userType:item.userType,
+              status:item.status
+            }
+          }
           this.loadingVisible = false
         }else{
           outputError(this, "服务异常")
