@@ -7,7 +7,7 @@
         <div class="message">
           <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.fromUid === '00000000000000000000000000000000'}">
             <!-- 用户头像显示 -->
-            <div v-if="memberInfo[item.fromUid].avatarUrl" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
+            <div v-if="memberInfo[item.fromUid].avatarUrl!=null&&memberInfo[item.fromUid].avatarUrl!==''" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
             <!-- <template v-else>{{ item.senderFirstLetterOfName.toUpperCase() }}</template> -->
             <template v-else style="width: 32px; height:32px;"><img class="status-wrapper-image" src="../../assets/images/avatar.png" /></template>
             <!-- 用户在线状态显示 -->
