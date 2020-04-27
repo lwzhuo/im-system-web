@@ -76,12 +76,16 @@ export default {
       sendButtonDisabled: true,
       ctrlButtonDown: false,
       postFileData: {
+        channelType:this.channelType,
+        msgType:3,
+        fromUid:JSON.parse(sessionStorage.getItem('currentUser')).id,
+        action:5,
         channelId: this.channelId,
         imageWidth: 0,
         imageHeight: 0,
         size: 0
       },     
-      uploadFileUrl: process.env.BASE_API + '/messages/files',
+      uploadFileUrl: process.env.BASE_API + '/message/file',
       uploadRequestHeaders: {
         'X-Token': sessionStorage.getItem('token')
       }
@@ -158,6 +162,7 @@ export default {
         e.preventDefault()
       }
     },
+    // 上传前的钩子
     beforeFileUpload(file) {  
       if(file.name.replace(/[\u0391-\uFFE5]/g, "aa").length > 64) {
         this.$message.error('文件名长度不能超过64!')
@@ -176,21 +181,25 @@ export default {
     },
     fileUploadSuccess(response, file, fileList) {
       this.loadingVisible = false
-      this.$emit('onMessageSent', response)
+      this.$emit('onMessageSent', response.data) // 给父组件发送信息
     },
+    //文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
     handleFileOnChange(file) {
       const fileName = file.name.toLowerCase()
+      let self = this
+      // 检查文件类型 处理图片
       if (fileName.endsWith('png') || fileName.endsWith('jpeg') || fileName.endsWith('jpg') || fileName.endsWith('gif')) {
         let img = new Image()
         img.src = file.url
-        let self = this
         img.onload = function() {
           self.postFileData.imageWidth = img.width
           self.postFileData.imageHeight = img.height
-          self.$refs.fileUpload.submit()
+          self.postFileData.msgType = 3  // 图片类型
+          self.$refs.fileUpload.submit()  // 提交图片
         }
       } else {
-        this.$refs.fileUpload.submit()
+        self.postFileData.msgType = 4 // 文件类型
+        this.$refs.fileUpload.submit() // 提交文件
       }
     } 
   },
@@ -200,7 +209,7 @@ export default {
     })
   },
   components: { 
-    EmojiPanel: resolve => require(['@/components/message/emojiPanel'], resolve)
+    EmojiPanel: resolve => require(['@/components/message/emojiPanel'], resolve) // 表情面板
   }
 }
 </script>
