@@ -53,7 +53,7 @@
         <div class="search"><input type="text" placeholder="搜索" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
       </div> -->
       <div class="channel-container" v-bind:style="{height: channelListHeight}">
-        <!-- <ul class="nav-channel first-nav-channel">
+        <ul class="nav-channel first-nav-channel">
           <li class="channel-header">
             <span>群聊</span>
             <button class="add-channel-btn" title="创建群聊" @click="openCreateGroupChannelDlg">+</button>
@@ -70,7 +70,7 @@
               </a>
             </router-link>
           </li>
-        </ul> -->
+        </ul>
         <ul class="nav-channel">
           <li class="channel-header">
             <span>私聊</span>
@@ -160,6 +160,10 @@ export default {
         this.userChannelList.pop()
       }
     },
+    onGroupChannelCreated(channel) {
+      this.selectedChannelId = channel.channelId
+      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 'G' }})    
+    },
     openCreatePrivateChannelDlg() {
       this.$refs.createPrivateChanneDlg.$emit('openDialog', 'add')
     },
@@ -225,6 +229,7 @@ export default {
   },
   components: { 
     CreatePrivateChannel: resolve => require(['@/components/channel/createPrivateChannel'], resolve),
+    CreateGroupChannel: resolve => require(['@/components/channel/createGroupChannel'], resolve),
     EditPersonalInfo: resolve => require(['@/components/user/editPersonalInfo'], resolve),
   }
 }
