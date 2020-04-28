@@ -6,7 +6,7 @@
       <el-form-item label="群组名称" prop="name">
         <el-col :span="16"><el-input ref="channelName" size="small" :maxlength="64" v-model="channelModel.name" autofocus="autofocus" @focus="clearValidate"></el-input></el-col>
       </el-form-item>
-      <el-form-item label="群组用途" prop="purpose">
+      <el-form-item label="群组简介" prop="purpose">
         <el-col :span="16">
           <el-input type="textarea" :rows="3" v-model="channelModel.purpose">
           </el-input>          
@@ -21,14 +21,14 @@
               <i slot="suffix" class="el-input__icon el-icon-search" @click="doSearchUser"></i>
             </div>
             <ul>
-              <li v-for="(item, index) in this.userList" @click="selectUser(item, index)">{{ item.nickname }}<span>+</span></li>
+              <li v-for="(item, index) in this.userList" @click="selectUser(item, index)">{{ item.username }}<span>+</span></li>
               <li class="load-more" v-show="searchParams.offset + searchParams.limit < userTotal" @click="loadMoreUser();">加载更多...</li>                                        
             </ul>
           </div>
           <div class="user-list-container right-list">
             <div class="title">已选组成员</div>
             <ul>
-              <li v-for="(item, index) in this.channelModel.members" @click="unselectUser(item, index)">{{ item.nickname }}<span>x</span></li>
+              <li v-for="(item, index) in this.channelModel.members" @click="unselectUser(item, index)">{{ item.username }}<span>x</span></li>
             </ul>
           </div>
         </el-col>
@@ -62,7 +62,7 @@ export default {
         name: '',
         purpose: '',
         members: [],
-        creatorNickname: JSON.parse(sessionStorage.getItem('currentUser')).nickname
+        creatorUsername: JSON.parse(sessionStorage.getItem('currentUser')).username
       },
       searchParams: {
         username: '',
@@ -95,19 +95,19 @@ export default {
     },
     getUserList() {
       this.showLoading = true
-      listUser(this.searchParams.username, this.searchParams.limit, this.searchParams.offset)
+      listUser(this.searchParams.username)
       .then(response => {
         let users = []
-        for(let user of response.data.rows) {
+        for(let user of response.data.data) {
           if(user.id !== this.myId) {
             users.push({
-              id: user.id,
-              nickname: user.nickname
+              id: user.uid,
+              username: user.username
             })
           }
         }
         this.userList = [...this.userList, ...users]
-        this.userTotal = response.data.total
+        this.userTotal = response.data.data.total
         this.showLoading = false
       })
       .catch(error => {
@@ -119,7 +119,7 @@ export default {
       this.channelModel.members.push(
         {
           id: user.id,
-          nickname: user.nickname,
+          username: user.username,
           index: index
         }
       )
@@ -129,7 +129,7 @@ export default {
       if(user.id !== this.myId) {
         this.userList.splice(user.index, 0, {
           id: user.id,
-          nickname: user.nickname
+          username: user.username
         })
         this.channelModel.members.splice(index, 1)
       }
@@ -183,7 +183,7 @@ export default {
         this.getUserList()
         this.channelModel.members.push({
           id: this.myId,
-          nickname: JSON.parse(sessionStorage.getItem('currentUser')).nickname,
+          username: JSON.parse(sessionStorage.getItem('currentUser')).username,
           index: 0
         })
         this.dialogProps.visible = true
