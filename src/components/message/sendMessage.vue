@@ -189,14 +189,13 @@ export default {
       let self = this
       // 检查文件类型 处理图片
       if (fileName.endsWith('png') || fileName.endsWith('jpeg') || fileName.endsWith('jpg') || fileName.endsWith('gif')) {
+        console.log("发送图片")
         let img = new Image()
         img.src = file.url
-        img.onload = function() {
-          self.postFileData.imageWidth = img.width
-          self.postFileData.imageHeight = img.height
-          self.postFileData.msgType = 3  // 图片类型
-          self.$refs.fileUpload.submit()  // 提交图片
-        }
+        self.postFileData.imageWidth = img.width
+        self.postFileData.imageHeight = img.height
+        self.postFileData.msgType = 3  // 图片类型
+        self.$refs.fileUpload.submit()  // 提交图片
       } else {
         self.postFileData.msgType = 4 // 文件类型
         this.$refs.fileUpload.submit() // 提交文件
