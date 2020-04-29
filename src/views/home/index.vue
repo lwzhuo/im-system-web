@@ -108,6 +108,7 @@
 <script>
 import { listUserChannels, getUserChannel} from '@/api/channel'
 import { IMClient } from '@/im_client/im_client'
+import GroupIcon from '@/components/svg/groupIcon'
 const USER_CHANNEL_LIST_SIZE = 16 // todo 配置文件
 export default {
   data() {
@@ -293,16 +294,7 @@ export default {
         this.userChannelList.unshift(channelJoined)
         if(this.userChannelList.length > USER_CHANNEL_LIST_SIZE) {
           this.userChannelList.pop()
-        }
-
-        let imClient = this.$store.getters.imClient
-        if(imClient != null) {
-          let sendMessage = {
-            action: 'BIND_GROUP_CHANNEL',
-            groupIds: message.channelId
-          }
-          imClient.send(JSON.stringify(sendMessage))          
-        }   
+        } 
       })
       .catch(error => {
         outputError(this, error)
@@ -379,23 +371,7 @@ export default {
       let wsUrl = process.env.WEBSOCKET_URL+"?token=" + sessionStorage.getItem('token') // todo 配置文件
       const imClient = new IMClient(wsUrl, 30 * 1000)
       this.$store.dispatch('setIMClient', imClient)
-      imClient.connect(this.bindToGroupChannel)
-    },
-    bindToGroupChannel(imClient) {
-      let groupIds = ''
-      for(let channel of this.userChannelList) {
-        if(channel.channelType === 2) {
-          groupIds += channel.channelId + ','
-        }
-      }
-      if(groupIds !== '') {
-        groupIds = groupIds.substr(0, groupIds.length - 1)
-        let message = {
-          action: 'BIND_GROUP_CHANNEL',
-          groupIds: groupIds
-        }
-        imClient.send(JSON.stringify(message))
-      }
+      imClient.connect()
     },
   },
   doHideChannel(channelId) {

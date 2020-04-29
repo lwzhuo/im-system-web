@@ -68,6 +68,8 @@ const clickOutside = {
   },
 }
 export default {
+  name: 'send-message',
+  props: ['channelId', 'channelType'],
   data() {
     return {
       message: '',
@@ -91,8 +93,6 @@ export default {
       }
     }
   },
-  name: 'send-message',
-  props: ['channelId', 'channelType'],
   directives: { clickOutside },
   methods: {
     doSendMessage() {

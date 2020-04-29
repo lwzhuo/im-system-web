@@ -92,7 +92,7 @@ export class IMClient {
     }
     this.send(JSON.stringify(registerMsg));
     if(this.connectCallback != null) {
-      this.connectCallback(this) //执行bindToGroupChannel
+      this.connectCallback(this)
     }
     const reconnectStarting = this.reconnectStarting
     this.reconnectUtil.stop()
