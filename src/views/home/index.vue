@@ -142,6 +142,28 @@ export default {
           break
       }
     },
+    handleOnlineStatus(command) {
+      if(this.onlineStatus !== command) {
+        this.onlineStatus = command
+        updateOnlineStatus(JSON.parse(sessionStorage.getItem('currentUser')).id, this.onlineStatus)
+        .catch(error => {
+          outputError(this, error)
+        })
+      }
+    },
+    logout() {
+      this.$confirm('确定注销当前用户吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+         type: 'warning'
+      }).then(_ => {
+        sessionStorage.clear()
+        this.$router.push('/login')
+        // 模拟f5刷新
+        this.$router.go(0)
+      }).catch(_ => {
+      })
+    },
     // 创建私聊channel
     onPrivateChannelCreated(channel) {
       this.selectedChannelId = channel.channelId
@@ -162,7 +184,13 @@ export default {
     },
     onGroupChannelCreated(channel) {
       this.selectedChannelId = channel.channelId
-      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 2 }})    
+      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 2 }})   
+      // 将新的对话插入到列表开头
+      this.userChannelList.unshift(channel)
+      // 列表超过USER_CHANNEL_LIST_SIZE长度限制 推出最后一个列表
+      if(this.userChannelList.length > USER_CHANNEL_LIST_SIZE) {
+        this.userChannelList.pop()
+      } 
     },
     openCreatePrivateChannelDlg() {
       this.$refs.createPrivateChanneDlg.$emit('openDialog', 'add')
@@ -173,6 +201,179 @@ export default {
     selectChannel(channel, index) {
       this.selectedChannelId = channel.channelId
     },
+    onOnlineStatusChanged(message) {
+      if(message.userId === JSON.parse(sessionStorage.getItem('currentUser')).id) {
+        return
+      }
+      for(let userChannel of this.userChannelList) {
+        if(userChannel.toUserId == null) {
+          continue
+        }
+        if(userChannel.toUserId === message.userId) {
+          userChannel.toUserOnlineStatus = message.onlineStatus
+          break
+        }
+      }
+    },
+    onNicknameChanged(message) {
+      if(message.userId === this.userInfo.id) {
+        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+        currentUser.nickname = this.userInfo.nickname = message.nickname
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser))
+        return
+      }
+      for(let userChannel of this.userChannelList) {
+        if(userChannel.toUserId === message.userId) {
+          if(userChannel.channelDisplayName == null || userChannel.channelDisplayName === '') {
+            userChannel.channelDisplayName = message.nickname
+          }
+          return
+        }
+      }   
+    },
+    onAvatarChanged(message) {
+      if(message.userId === this.userInfo.id) {
+        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+        currentUser.avatarUrl = this.userInfo.avatarUrl = ''
+        currentUser.avatarUrl = this.userInfo.avatarUrl = message.avatar
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser))          
+      }
+    },
+    onUnreadMessage(message) {
+      if(message.channelId !== this.selectedChannelId) {
+        let index = this.userChannelList.findIndex(item => item.channelId === message.channelId)
+        if(index === -1) {
+          let unreadMsgChannelIndex = this.unreadMessageChannelList.findIndex(item => item === message.channelId)
+          if(unreadMsgChannelIndex == -1) {
+            this.unreadMessageChannelList.push(message.channelId)
+            getUserChannel(this.userInfo.id, message.channelId)
+            .then(response => {
+              let exists = this.userChannelList.findIndex(item => item.channelId === message.channelId)
+              if(exists === -1) {
+                this.userChannelList.unshift(response.data)
+              }
+              let existingUnreadMsgChannelIndex = this.unreadMessageChannelList.findIndex(item => item === message.channelId)
+              if(existingUnreadMsgChannelIndex > -1) {
+                this.unreadMessageChannelList.splice(existingUnreadMsgChannelIndex, 1)
+              }
+            })
+            .catch(error => {
+              outputError(this, error)
+            })          
+          }         
+        } else {
+          this.userChannelList[index].unreadMessageCount += 1
+        }
+      }
+    },
+    onReadMessage(message) {
+      for(let userChannel of this.userChannelList) {
+        if(userChannel.channelId === message.channelId) {
+          if(message.readAll) {
+            userChannel.unreadMessageCount = 0
+          } else {
+            userChannel.unreadMessageCount -= message.total
+          }
+          return
+        }
+      }
+    },
+    onJoinChannel(message) {
+      let index = this.userChannelList.findIndex(item => item.channelId === message.channelId)
+      if(index > -1) {
+        return
+      }
+      getUserChannel(this.userInfo.id, message.channelId)
+      .then(response => {
+        let channelJoined = response.data
+        let index = this.userChannelList.findIndex(item => item.channelId === channelJoined.channelId)
+        if(index > -1) {
+          return
+        }
+        this.userChannelList.unshift(channelJoined)
+        if(this.userChannelList.length > USER_CHANNEL_LIST_SIZE) {
+          this.userChannelList.pop()
+        }
+
+        let imClient = this.$store.getters.imClient
+        if(imClient != null) {
+          let sendMessage = {
+            action: 'BIND_GROUP_CHANNEL',
+            groupIds: message.channelId
+          }
+          imClient.send(JSON.stringify(sendMessage))          
+        }   
+      })
+      .catch(error => {
+        outputError(this, error)
+      })
+    },    
+    onChannelNameChanged(message) {
+      for(let channel of this.userChannelList) {
+        if(channel.channelId === message.channelId) {
+          channel.channelName = message.channelName
+          return
+        }
+      }
+    },
+    onRemoveFromChannel(message) {
+      let index = this.userChannelList.findIndex(item => item.channelId === message.channelId)
+      if(index === -1) {
+        return
+      }      
+      let imClient = this.$store.getters.imClient
+      if(imClient != null) {      
+        let sendMessage = {
+          action: 'REMOVE_CHANNEL_FROM_GROUP',
+          channelId: message.channelId
+        }
+        imClient.send(JSON.stringify(sendMessage))
+      }
+      this.userChannelList.splice(index, 1)
+      if(this.selectedChannelId === message.channelId) {
+        this.selectedChannelId = ''
+        this.$router.push({ name: 'welcome' })
+      }
+    },
+    leaveChannelCallback(channelId) {
+      let index = this.userChannelList.findIndex(item => item.channelId === channelId)
+      if(index === -1) {
+        return
+      }      
+      let imClient = this.$store.getters.imClient
+      if(imClient != null) {      
+        let sendMessage = {
+          action: 'REMOVE_CHANNEL_FROM_GROUP',
+          channelId: channelId
+        }
+        imClient.send(JSON.stringify(sendMessage))
+      }
+      this.userChannelList.splice(index, 1)
+      if(this.selectedChannelId === channelId) {
+        this.selectedChannelId = ''
+        this.$router.push({ name: 'welcome' })
+      }
+    },
+    removeChannelCallback(channelId) {
+      this.leaveChannelCallback(channelId)
+    },
+    onChannelRemoved(message) {
+      this.leaveChannelCallback(message.channelId)
+    },
+    onUserOnline() {
+      this.onlineStatus = 'online'
+      updateOnlineStatus(JSON.parse(sessionStorage.getItem('currentUser')).id, this.onlineStatus)
+      .catch(error => {
+        outputError(this, error)
+      })
+    },
+    onUserOffline() {
+      this.onlineStatus = 'offline'
+      updateOnlineStatus(JSON.parse(sessionStorage.getItem('currentUser')).id, this.onlineStatus)
+      .catch(error => {
+        outputError(this, error)
+      })
+    }, 
     // 初始化websocket客户端
     initIMClient() {
       let wsUrl = process.env.WEBSOCKET_URL+"?token=" + sessionStorage.getItem('token') // todo 配置文件
@@ -197,6 +398,53 @@ export default {
       }
     },
   },
+  doHideChannel(channelId) {
+      hideChannel(this.userInfo.id, channelId)
+      .then(response => {
+        if(response.data > 0) {
+          let index = this.userChannelList.findIndex(item => item.channelId === channelId)
+          if(index === -1) {
+            return
+          }
+          this.userChannelList.splice(index, 1)
+          if(this.selectedChannelId === channelId) {
+            this.selectedChannelId = ''
+            this.$router.push({ name: 'welcome' })
+          }          
+        }
+      })
+      .catch(error => {
+        outputError(this, error)
+      })      
+    },
+    doSearchChannel() {
+      if(!this.searchKey.trim()) {
+        return
+      }
+      this.userChannelList = []
+      searchUserChannel(this.userInfo.id, this.searchKey)
+      .then(response => {
+        this.userChannelList = response.data
+      })
+      .catch(error => {
+        outputError(this, error)
+      })        
+    },
+    onSearchInputKeyUp(event) {
+      if(!this.searchKey.trim()) {
+        listUserChannels(this.userInfo.id, USER_CHANNEL_LIST_SIZE)
+        .then(response => {
+          this.userChannelList = response.data
+        })
+        .catch(error => {
+          outputError(this, error)
+        })
+        return
+      }
+      if(event.keyCode === 13) {
+        this.doSearchChannel()
+      }
+    },
   computed: {
     realAvatarUrl() {
       if(this.userInfo.avatarUrl == null || this.userInfo.avatarUrl.trim() === '') {
