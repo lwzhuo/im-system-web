@@ -4,11 +4,11 @@
     <el-form class="form" :model="channelModel" :rules="formRules" 
       ref="channelForm" label-width="80px" label-position="right" size="small">
       <el-form-item label="群组名称" prop="name">
-        <el-col :span="16"><el-input ref="channelName" size="small" :maxlength="64" v-model="channelModel.name" autofocus="autofocus" @focus="clearValidate"></el-input></el-col>
+        <el-col :span="16"><el-input ref="channelName" size="small" :maxlength="64" v-model="channelModel.channelName" autofocus="autofocus" @focus="clearValidate"></el-input></el-col>
       </el-form-item>
       <el-form-item label="群组简介" prop="purpose">
         <el-col :span="16">
-          <el-input type="textarea" :rows="3" v-model="channelModel.purpose">
+          <el-input type="textarea" :rows="3" v-model="channelModel.summary">
           </el-input>          
         </el-col>
       </el-form-item>
@@ -28,7 +28,7 @@
           <div class="user-list-container right-list">
             <div class="title">已选组成员</div>
             <ul>
-              <li v-for="(item, index) in this.channelModel.members" @click="unselectUser(item, index)">{{ item.username }}<span>x</span></li>
+              <li v-for="(item, index) in this.channelModel.channelUserList" @click="unselectUser(item, index)">{{ item.username }}<span>x</span></li>
             </ul>
           </div>
         </el-col>
@@ -58,21 +58,19 @@ export default {
         title: ''
       },
       channelModel : {
-        type: 'G',
-        name: '',
-        purpose: '',
-        members: [],
-        creatorUsername: JSON.parse(sessionStorage.getItem('currentUser')).username
+        channelType: 2, // 群聊
+        creatorId: JSON.parse(sessionStorage.getItem('currentUser')).id,
+        channelName: '',
+        summary: '',
+        channelUserList: [],
       },
       searchParams: {
         username: '',
-        limit: 20,
-        offset: 0
       },      
       userList: [],
       userTotal: 0,
       formRules: {
-        name: [
+        channelName: [
           { required: true, message: '请输入群组名称', trigger: 'blur' },
           { min: 3, max: 64, message: '长度在 3 到 64 个字符', trigger: 'blur' }
         ],
@@ -101,7 +99,7 @@ export default {
         for(let user of response.data.data) {
           if(user.id !== this.myId) {
             users.push({
-              id: user.uid,
+              uid: user.uid,
               username: user.username
             })
           }
@@ -116,9 +114,9 @@ export default {
       })      
     },
     selectUser(user, index) {
-      this.channelModel.members.push(
+      this.channelModel.channelUserList.push(
         {
-          id: user.id,
+          uid: user.uid,
           username: user.username,
           index: index
         }
@@ -128,10 +126,10 @@ export default {
     unselectUser(user, index) {
       if(user.id !== this.myId) {
         this.userList.splice(user.index, 0, {
-          id: user.id,
+          uid: user.uid,
           username: user.username
         })
-        this.channelModel.members.splice(index, 1)
+        this.channelModel.channelUserList.splice(index, 1)
       }
     },
     loadMoreUser() {
@@ -144,7 +142,7 @@ export default {
           this.showLoading = true
           createChannel(this.channelModel)
           .then(response => {
-            this.$emit('onChannelCreated', response.data)
+            this.$emit('onChannelCreated', response.data.data)
             this.showLoading = false
             Object.assign(this.$data, this.$options.data())
             this.dialogProps.visible = false
@@ -179,10 +177,9 @@ export default {
     this.$nextTick(() => {  
       this.$on('openDialog', function(action) {
         this.userList = []
-        this.channelModel.members = []
         this.getUserList()
-        this.channelModel.members.push({
-          id: this.myId,
+        this.channelModel.channelUserList.push({
+          uid: this.myId,
           username: JSON.parse(sessionStorage.getItem('currentUser')).username,
           index: 0
         })

@@ -40,7 +40,7 @@ export const getChannelById = (id) =>
 
 export const isAdmin = (channelId) =>
     request({
-        url: '/channels/' + channelId + '/isAdmin',
+        url: '/channel/' + channelId + '/is-admin',
         method: 'GET'
     })
 

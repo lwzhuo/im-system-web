@@ -162,7 +162,7 @@ export default {
     },
     onGroupChannelCreated(channel) {
       this.selectedChannelId = channel.channelId
-      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 'G' }})    
+      this.$router.push({ name: 'messageDialog', params: { channelId: channel.channelId, channelType: 2 }})    
     },
     openCreatePrivateChannelDlg() {
       this.$refs.createPrivateChanneDlg.$emit('openDialog', 'add')
