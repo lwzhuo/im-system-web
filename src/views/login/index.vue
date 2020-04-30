@@ -84,13 +84,13 @@ export default {
               return
             }else{
               let responseData = response.data.data;
-              sessionStorage.setItem('currentUser', JSON.stringify({
+              localStorage.setItem('currentUser', JSON.stringify({
                 id: responseData.uid,
                 username: responseData.username,
                 firstLetterOfName: responseData.firstLetterOfName,
                 avatarUrl: responseData.avatarUrl,
               }))
-              sessionStorage.setItem('token', responseData.token)
+              localStorage.setItem('token', responseData.token)
               this.loadingVisible = false
               let redirect = decodeURIComponent(
                 this.$route.query.redirect || "/"

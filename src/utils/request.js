@@ -16,9 +16,9 @@ service.interceptors.request.use(config => {
         'Content-Type': 'application/json'
       }
     // Do something before request is sent
-    if (sessionStorage.getItem('token')) {
+    if (localStorage.getItem('token')) {
         // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
-        config.headers['X-Token'] = sessionStorage.getItem('token')
+        config.headers['X-Token'] = localStorage.getItem('token')
     }
     return config
 }, error => {

@@ -82,8 +82,8 @@ export default {
       memberInfo:{},    // 维护channel的用户列表 使用uid作为key进行访问
       sentMessage: null,
       isAdmin: false,
-      myId: JSON.parse(sessionStorage.getItem('currentUser')).id,
-      myName: JSON.parse(sessionStorage.getItem('currentUser')).username
+      myId: JSON.parse(localStorage.getItem('currentUser')).id,
+      myName: JSON.parse(localStorage.getItem('currentUser')).username
     }
   },
   methods: {
@@ -184,7 +184,7 @@ export default {
          type: 'warning'
       }).then(_ => {
         this.loadingVisible = true
-        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'))
         leaveChannel(userChannel.channelId, currentUser.id, currentUser.nickname)
         .then(_ => {
           if(this.$route.params.leaveChannelCallback !== undefined) {
@@ -206,7 +206,7 @@ export default {
          type: 'warning'
       }).then(_ => {
         this.loadingVisible = true
-        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'))
         removeChannel(channelId, currentUser.id)
         .then(response => {
           if(response.data > 0 && this.$route.params.removeChannelCallback !== undefined) {

@@ -99,7 +99,7 @@ export default {
         })
       }
       addMember(this.channelId, {
-        admin: JSON.parse(sessionStorage.getItem('currentUser')).nickname,
+        admin: JSON.parse(localStorage.getItem('currentUser')).nickname,
         users: users
       })
       .then(response => {

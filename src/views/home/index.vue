@@ -112,7 +112,7 @@ import GroupIcon from '@/components/svg/groupIcon'
 const USER_CHANNEL_LIST_SIZE = 16 // todo 配置文件
 export default {
   data() {
-    let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'))
     return {
       userInfo: {
         id: currentUser.id,
@@ -146,7 +146,7 @@ export default {
     handleOnlineStatus(command) {
       if(this.onlineStatus !== command) {
         this.onlineStatus = command
-        updateOnlineStatus(JSON.parse(sessionStorage.getItem('currentUser')).id, this.onlineStatus)
+        updateOnlineStatus(JSON.parse(localStorage.getItem('currentUser')).id, this.onlineStatus)
         .catch(error => {
           outputError(this, error)
         })
@@ -158,7 +158,7 @@ export default {
         cancelButtonText: '取消',
          type: 'warning'
       }).then(_ => {
-        sessionStorage.clear()
+        localStorage.clear()
         this.$router.push('/login')
         // 模拟f5刷新
         this.$router.go(0)
@@ -203,7 +203,7 @@ export default {
       this.selectedChannelId = channel.channelId
     },
     onOnlineStatusChanged(message) {
-      if(message.userId === JSON.parse(sessionStorage.getItem('currentUser')).id) {
+      if(message.userId === JSON.parse(localStorage.getItem('currentUser')).id) {
         return
       }
       for(let userChannel of this.userChannelList) {
@@ -218,9 +218,9 @@ export default {
     },
     onNicknameChanged(message) {
       if(message.userId === this.userInfo.id) {
-        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'))
         currentUser.nickname = this.userInfo.nickname = message.nickname
-        sessionStorage.setItem('currentUser', JSON.stringify(currentUser))
+        localStorage.setItem('currentUser', JSON.stringify(currentUser))
         return
       }
       for(let userChannel of this.userChannelList) {
@@ -234,10 +234,10 @@ export default {
     },
     onAvatarChanged(message) {
       if(message.userId === this.userInfo.id) {
-        let currentUser = JSON.parse(sessionStorage.getItem('currentUser'))
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'))
         currentUser.avatarUrl = this.userInfo.avatarUrl = ''
         currentUser.avatarUrl = this.userInfo.avatarUrl = message.avatar
-        sessionStorage.setItem('currentUser', JSON.stringify(currentUser))          
+        localStorage.setItem('currentUser', JSON.stringify(currentUser))          
       }
     },
     onUnreadMessage(message) {
@@ -354,21 +354,21 @@ export default {
     },
     onUserOnline() {
       this.onlineStatus = 'online'
-      updateOnlineStatus(JSON.parse(sessionStorage.getItem('currentUser')).id, this.onlineStatus)
+      updateOnlineStatus(JSON.parse(localStorage.getItem('currentUser')).id, this.onlineStatus)
       .catch(error => {
         outputError(this, error)
       })
     },
     onUserOffline() {
       this.onlineStatus = 'offline'
-      updateOnlineStatus(JSON.parse(sessionStorage.getItem('currentUser')).id, this.onlineStatus)
+      updateOnlineStatus(JSON.parse(localStorage.getItem('currentUser')).id, this.onlineStatus)
       .catch(error => {
         outputError(this, error)
       })
     }, 
     // 初始化websocket客户端
     initIMClient() {
-      let wsUrl = process.env.WEBSOCKET_URL+"?token=" + sessionStorage.getItem('token') // todo 配置文件
+      let wsUrl = process.env.WEBSOCKET_URL+"?token=" + localStorage.getItem('token') // todo 配置文件
       const imClient = new IMClient(wsUrl, 30 * 1000)
       this.$store.dispatch('setIMClient', imClient)
       imClient.connect()
@@ -432,9 +432,19 @@ export default {
       return this.userInfo.avatarUrl + (this.userInfo.avatarUrl.indexOf('?') > -1 ? '&' : '?') + 'rdm=' + Math.random()
     }
   },
-  beforeCreate() {
-    // 初始化工作
-    let userId = JSON.parse(sessionStorage.getItem('currentUser')).id
+  // 使用activated每次页面被激活时运行
+  activated() {
+    if(!localStorage.getItem('currentUser')){
+      console.log("activated 找不到用户信息"+localStorage.getItem('currentUser'))
+      this.$router.push({
+        path: '/login',
+        query: { redirect: this.$route.path }
+      })
+      return
+    }
+    console.log("activated 找到用户信息"+localStorage.getItem('currentUser'))
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    let userId = JSON.parse(localStorage.getItem('currentUser')).id
     listUserChannels(userId, USER_CHANNEL_LIST_SIZE)
     .then(response => {
       this.userChannelList = response.data.data
@@ -443,12 +453,28 @@ export default {
     .catch(error => {
       console.error(error)
     })
-  },
-  created() {
     if(this.$route.params.channelId) {
       this.selectedChannelId = this.$route.params.channelId
     } else {
       this.$router.push({ name: 'welcome' })
+    }
+  },
+  // 执行权限认证 拦截
+  beforeRouteEnter(to, from, next) {    
+    if(localStorage.getItem("token")) {
+        next(true);
+    }else {
+        console.log("before route")
+        next(vm => {    // 通过 `vm` 访问组件实例 ，直接用this是有指向问题的   
+            vm.$router.push({
+            path: '/login',
+            query: { redirect: to.fullPath }
+            });
+            vm.$message({       //这里是elementUI的message提示，按自己需求来写就行
+            message: '请先登录！',
+            type: 'warning'
+            });
+        })
     }
   },
   components: { 

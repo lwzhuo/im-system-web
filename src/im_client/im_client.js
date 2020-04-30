@@ -2,7 +2,7 @@ import actionMap from './actionMap'
 export class IMClient {
   constructor(url,heartChecknterval) {
     this.url = url
-    this.currentUser = JSON.parse(sessionStorage.getItem("currentUser"))
+    this.currentUser = JSON.parse(localStorage.getItem("currentUser"))
     this.heartChecknterval = heartChecknterval
     this.currentChannelId = ''
   }

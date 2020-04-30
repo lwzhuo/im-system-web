@@ -51,7 +51,7 @@ export default {
       oldNickname: '',
       uploadAvatarUrl: process.env.BASE_API + '/user/avatar/upload',
       uploadRequestHeaders: {
-        'X-Token': sessionStorage.getItem('token')
+        'X-Token': localStorage.getItem('token')
       },
       // 格式校验
       formRules: {
@@ -89,7 +89,7 @@ export default {
     // 使用确认按钮修改所有的用户信息
     doSaveMyInfo() {
       this.loadingVisible = true
-      const userId = JSON.parse(sessionStorage.getItem('currentUser')).id
+      const userId = JSON.parse(localStorage.getItem('currentUser')).id
       updateMyInfo(this.oldNickname !== this.myInfoModel.nickname ? this.myInfoModel.nickname : '', this.newAvatarUrl)
       .then(response => {
         let responseCode = response.data.code
@@ -134,7 +134,7 @@ export default {
             // 另外一个版本的默认头像 使用的是字母
             // myAvatarUrl = myAvatarUrl.toLowerCase()
             // if(!myAvatarUrl.startsWith('http:') && !myAvatarUrl.startsWith('https:')) {
-            //   const userId = JSON.parse(sessionStorage.getItem('currentUser')).id
+            //   const userId = JSON.parse(localStorage.getItem('currentUser')).id
             //   this.myInfoModel.avatarUrl = process.env.BASE_API + '/users/' + userId + '/avatar?width=80&height=80&rdm=' + Math.random()
             // }
           }else{

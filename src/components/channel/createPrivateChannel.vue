@@ -85,7 +85,7 @@ export default {
         return
       }
       this.showLoading = true
-      let currentUser = JSON.parse(sessionStorage.getItem("currentUser"))
+      let currentUser = JSON.parse(localStorage.getItem("currentUser"))
       let channel = {
         channelType: 1,
         creatorId: currentUser.id,

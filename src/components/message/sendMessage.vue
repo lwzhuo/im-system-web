@@ -80,7 +80,7 @@ export default {
       postFileData: {
         channelType:this.channelType,
         msgType:3,
-        fromUid:JSON.parse(sessionStorage.getItem('currentUser')).id,
+        fromUid:JSON.parse(localStorage.getItem('currentUser')).id,
         action:5,
         channelId: this.channelId,
         imageWidth: 0,
@@ -89,7 +89,7 @@ export default {
       },     
       uploadFileUrl: process.env.BASE_API + '/message/file',
       uploadRequestHeaders: {
-        'X-Token': sessionStorage.getItem('token')
+        'X-Token': localStorage.getItem('token')
       }
     }
   },
@@ -110,7 +110,7 @@ export default {
       this.loadingVisible = true
       const newMessage = {
         action:5,
-        fromUid:JSON.parse(sessionStorage.getItem('currentUser')).id,
+        fromUid:JSON.parse(localStorage.getItem('currentUser')).id,
         msgType:1,
         channelId: this.channelId,
         channelType: this.channelType,

@@ -50,7 +50,7 @@ export default {
   name: "create-group-channel",
   data() {
     return {
-      myId: JSON.parse(sessionStorage.getItem('currentUser')).id,
+      myId: JSON.parse(localStorage.getItem('currentUser')).id,
       showLoading: false,
       dialogProps: {
         visible: false,
@@ -59,7 +59,7 @@ export default {
       },
       channelModel : {
         channelType: 2, // 群聊
-        creatorId: JSON.parse(sessionStorage.getItem('currentUser')).id,
+        creatorId: JSON.parse(localStorage.getItem('currentUser')).id,
         channelName: '',
         summary: '',
         channelUserList: [],
@@ -180,7 +180,7 @@ export default {
         this.getUserList()
         this.channelModel.channelUserList.push({
           uid: this.myId,
-          username: JSON.parse(sessionStorage.getItem('currentUser')).username,
+          username: JSON.parse(localStorage.getItem('currentUser')).username,
           index: 0
         })
         this.dialogProps.visible = true

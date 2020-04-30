@@ -60,7 +60,7 @@ export default {
   props: ['channelId', 'userChannel','memberInfo'],
   data() {
     return {
-      myId: JSON.parse(sessionStorage.getItem('currentUser')).id,
+      myId: JSON.parse(localStorage.getItem('currentUser')).id,
       maxCreateAt: new Date().getTime() ,
       loadingVisible: false,
       messageList: [],

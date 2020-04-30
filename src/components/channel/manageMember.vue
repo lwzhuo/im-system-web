@@ -33,7 +33,7 @@ export default {
   props: ['channelId', 'channelName'],
   data() {
     return {
-      myId: JSON.parse(sessionStorage.getItem('currentUser')).id,
+      myId: JSON.parse(localStorage.getItem('currentUser')).id,
       dialogVisible: false,
       loadingVisible: false,
       memberList: [],
@@ -69,7 +69,7 @@ export default {
       removeMember(this.channelId, {
         memberId: memberId,
         memberNickname: memberNickname,
-        admin: JSON.parse(sessionStorage.getItem('currentUser')).nickname
+        admin: JSON.parse(localStorage.getItem('currentUser')).nickname
       })
       .then(response => {
         this.loadingVisible = false

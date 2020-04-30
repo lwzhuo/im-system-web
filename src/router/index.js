@@ -44,7 +44,7 @@ const router = new Router({
 
 // 控制跳转 用户身份校验
 router.beforeEach((to, from, next) => {
-  let token = sessionStorage.getItem('token')
+  let token = localStorage.getItem('token')
   if (to.meta.requiresAuth) {// 需要权限校验
     if (token) {// 检查token
       next()
