@@ -3,8 +3,7 @@
     <div slot="title" class="dialog-header"><h3>{{channelName}}&nbsp;-&nbsp;成员</h3></div>
     <div class="list-container">
       <ul>
-        <li v-for="(item, index) in this.memberList" :class="{ 'is-admin': item.admin }" :title="item.admin ? '群管理员': ''">{{ item.nickname }}</li>
-        <li class="load-more" v-show="searchParams.offset + searchParams.limit < memberTotal" @click="loadMoreMember();">加载更多...</li>                                        
+        <li v-for="(item, index) in this.memberList" :class="{ 'is-admin': item.admin }" :title="item.admin ? '群管理员': ''">{{ item.username }}</li>                                     
       </ul>
     </div>
     <span slot="footer" class="dialog-footer">
@@ -19,38 +18,25 @@ import { listMember } from '@/api/channel'
 
 export default {
   name: 'member-list',
-  props: ['channelId', 'channelName'],
+  props: ['channelId', 'channelName','memberInfo'],
   data() {
     return {
       dialogVisible: false,
       loadingVisible: false,
       memberList: [],
-      searchParams: {
-        username: '',
-        limit: 20,
-        offset: 0
-      },
       memberTotal: 0
     }
   },
   methods: {
     getMemberList() {
-      listMember(this.channelId, this.searchParams.username, 
-        this.searchParams.limit, this.searchParams.offset)
-      .then(response => {
-        this.memberList = response.data.rows        
-        this.memberTotal = response.data.total
-        this.loadingVisible = false
-      })
-      .catch(error => {
-        this.loadingVisible = false
-        outputError(this, error)
-      })
-    },
-    loadMoreUser() {
-      this.searchParams.offset += this.searchParams.limit
-      this.getMemberList()
-    },   
+      this.memberList = []
+      for(let uid in this.memberInfo){
+        this.memberList.push({
+          id:uid,
+          username:this.memberInfo[uid].username
+        })
+      }
+    }  
   },
   mounted: function() {
     this.$nextTick(() => {  

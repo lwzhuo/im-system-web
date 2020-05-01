@@ -44,7 +44,7 @@
         <edit-channel-title ref="editChannelTitleDlg" @onEditTitleFinished="onEditTitleFinished"></edit-channel-title>
         <edit-channel-name ref="editChannelNameDlg" @onEditNameFinished="onEditNameFinished"></edit-channel-name>
         <add-member ref="addChannelMemberDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></add-member>
-        <member-list ref="memberListDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></member-list>
+        <member-list ref="memberListDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" :member-info="memberInfo"></member-list>
         <member-management ref="memberManagementDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" @onOpenAddMemberDlg="doOpenAddMemberDlg"></member-management>
         <div v-if="userChannel.channelType === 2" class="members-container" @click="showMemberList">
           <div class="members">
