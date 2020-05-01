@@ -445,8 +445,20 @@ export default {
     console.log("activated 找到用户信息"+localStorage.getItem('currentUser'))
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     let userId = JSON.parse(localStorage.getItem('currentUser')).id
-    listUserChannels(userId, USER_CHANNEL_LIST_SIZE)
+    listUserChannels(userId, USER_CHANNEL_LIST_SIZE) // 获取用户的聊天列表
     .then(response => {
+      if(response.data.code==-200){
+        // token不合法
+        // 清理localstorage
+        localStorage.removeItem("currentUser")
+        localStorage.removeItem("token")
+        // 跳转登录窗口
+        this.$router.push({
+          path: '/login',
+          query: { redirect: this.$route.path }
+        })
+        return
+      }
       this.userChannelList = response.data.data
       this.initIMClient()// 初始化ws客户端
     })
