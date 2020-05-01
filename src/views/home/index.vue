@@ -42,12 +42,12 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="editPersonalInfo">账号设置</el-dropdown-item>
               <!-- <el-dropdown-item command="changePassword">修改密码</el-dropdown-item> -->
-              <!-- <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item> -->
+              <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </a>
         <edit-personal-info ref="editPersonalInfoDlg"></edit-personal-info>
-        <change-password ref="changePasswordDlg"></change-password>
+        <!-- <change-password ref="changePasswordDlg"></change-password> -->
       </div>
       <!-- <div class="channel-search-container">
         <div class="search"><input type="text" placeholder="搜索" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
@@ -109,6 +109,8 @@
 import { listUserChannels, getUserChannel} from '@/api/channel'
 import { IMClient } from '@/im_client/im_client'
 import GroupIcon from '@/components/svg/groupIcon'
+import { logout } from '@/api/auth'
+
 const USER_CHANNEL_LIST_SIZE = 16 // todo 配置文件
 export default {
   data() {
@@ -158,10 +160,22 @@ export default {
         cancelButtonText: '取消',
          type: 'warning'
       }).then(_ => {
-        localStorage.clear()
-        this.$router.push('/login')
-        // 模拟f5刷新
-        this.$router.go(0)
+        // 停止websocket客户端
+        let imClient = this.$store.getters.imClient
+        if(imClient!=null)
+          imClient.conn.close()
+        // 知会服务端
+        logout().then(response=>{
+          if(response.data.code==0){
+            console.log("注销成功")
+            localStorage.clear()// 清理localstorage
+            this.$router.push('/login') // 跳转到登录页面
+            // 模拟f5刷新
+            this.$router.go(0)
+          }
+        }).catch(error => {
+            outputError(this, error)
+          })
       }).catch(_ => {
       })
     },

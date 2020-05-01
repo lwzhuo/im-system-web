@@ -11,3 +11,9 @@ export const login = (username, password) =>
             "password":password
         }
     })
+
+export const logout = () =>
+    request({
+        url: '/auth/logout',
+        method: 'GET',
+    })
