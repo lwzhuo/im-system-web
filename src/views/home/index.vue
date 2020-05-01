@@ -449,14 +449,12 @@ export default {
   // 使用activated每次页面被激活时运行
   activated() {
     if(!localStorage.getItem('currentUser')){
-      console.log("activated 找不到用户信息"+localStorage.getItem('currentUser'))
       this.$router.push({
         path: '/login',
         query: { redirect: this.$route.path }
       })
       return
     }
-    console.log("activated 找到用户信息"+localStorage.getItem('currentUser'))
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     let userId = JSON.parse(localStorage.getItem('currentUser')).id
     listUserChannels(userId, USER_CHANNEL_LIST_SIZE) // 获取用户的聊天列表
@@ -490,7 +488,6 @@ export default {
     if(localStorage.getItem("token")) {
         next(true);
     }else {
-        console.log("before route")
         next(vm => {    // 通过 `vm` 访问组件实例 ，直接用this是有指向问题的   
             vm.$router.push({
             path: '/login',

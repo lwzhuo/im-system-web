@@ -96,6 +96,7 @@ export default {
                 this.$route.query.redirect || "/"
               )
               this.$router.push(redirect)
+              this.$router.go(0)
             }
           })
           .catch(error => {
