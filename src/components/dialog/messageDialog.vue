@@ -46,10 +46,20 @@
         <add-member ref="addChannelMemberDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></add-member>
         <member-list ref="memberListDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" :member-info="memberInfo"></member-list>
         <member-management ref="memberManagementDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" @onOpenAddMemberDlg="doOpenAddMemberDlg"></member-management>
+        <!-- 成员管理 -->
         <div v-if="userChannel.channelType === 2" class="members-container" @click="showMemberList">
           <div class="members">
             <div>{{ userChannel.memberCount }}</div>
             <svg width="14px" height="14px" viewBox="0 0 16 16"><g id="Symbols" stroke="none" stroke-width="1" fill="inherit" fill-rule="evenodd"><g id="Channel-Header/Web-HD" transform="translate(-725.000000, -32.000000)" fill-rule="nonzero" fill="inherit"><g id="Channel-Header"><g id="user-count" transform="translate(676.000000, 22.000000)"><path d="M64.9481342,24 C64.6981342,20.955 63.2551342,19.076 60.6731342,18.354 C61.4831342,17.466 61.9881342,16.296 61.9881342,15 C61.9881342,12.238 59.7501342,10 56.9881342,10 C54.2261342,10 51.9881342,12.238 51.9881342,15 C51.9881342,16.297 52.4941342,17.467 53.3031342,18.354 C50.7221342,19.076 49.2771342,20.955 49.0271342,24 C49.0161342,24.146 49.0061342,24.577 49.0001342,25.001 C48.9911342,25.553 49.4361342,26 49.9881342,26 L63.9881342,26 C64.5411342,26 64.9851342,25.553 64.9761342,25.001 C64.9701342,24.577 64.9601342,24.146 64.9481342,24 Z M56.9881342,12 C58.6421342,12 59.9881342,13.346 59.9881342,15 C59.9881342,16.654 58.6421342,18 56.9881342,18 C55.3341342,18 53.9881342,16.654 53.9881342,15 C53.9881342,13.346 55.3341342,12 56.9881342,12 Z M51.0321342,24 C51.2981342,21.174 52.7911342,20 55.9881342,20 L57.9881342,20 C61.1851342,20 62.6781342,21.174 62.9441342,24 L51.0321342,24 Z" id="User_4_x2C__Profile_5-Copy-9"></path></g></g></g></g></svg>
+          </div>
+        </div>
+        <!-- 转发分享 -->
+        <share-list ref="shareDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></share-list>
+        <div v-if="userChannel.channelType === 2" class="members-container" @click="showShareDialog">
+          <div class="members">
+            <svg class="icon" viewBox="0 0 32 32">
+	            <path d="M18.84 19.181v6.971l11.56-10.704-11.56-10.328v6.186c-14.040 0-17.24 15.574-17.24 15.574 3.973-7.024 9.619-7.699 17.24-7.699z"></path>
+            </svg>
           </div>
         </div>
       </div>
@@ -60,7 +70,11 @@
       </div>
     </div>
     <div class="footer">
-      <send-message :channel-id="$route.params.channelId" :channel-type="$route.params.channelType" @onMessageSent="showSentMessage"></send-message>
+      <!-- 分享确认框 -->
+      <ul class="ul">
+        <!-- <li class="sharesubmit"><share-submit></share-submit></li> -->
+        <li class="sendmessage"><send-message :channel-id="$route.params.channelId" :channel-type="$route.params.channelType" @onMessageSent="showSentMessage"></send-message></li>
+      </ul>
     </div>
   </div>
 </template>
@@ -229,6 +243,9 @@ export default {
     },
     showMemberList() {
       this.$refs.memberListDlg.$emit('openDialog')
+    },
+    showShareDialog() {
+      this.$refs.shareDlg.$emit('openDialog')
     }
   },
   created() {
@@ -243,6 +260,8 @@ export default {
     AddMember: resolve => require(['@/components/channel/addMember'], resolve),
     MemberList: resolve => require(['@/components/channel/memberList'], resolve),
     MemberManagement: resolve => require(['@/components/channel/manageMember'], resolve),
+    ShareList: resolve => require(['@/components/channel/shareList'],resolve),
+    ShareSubmit: resolve => require(['@/components/channel/shareSubmit'],resolve),
   }
 }
 </script>
@@ -368,9 +387,21 @@ export default {
   .footer {
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
-    height: 156px;
+    height: 18%;
     width: 100%;
     z-index: 5;
+    .ul{
+      list-style:none;
+      margin: 0px;
+      padding: 0px;
+      height: 100%;
+      .sharesubmit{
+        height: 20%;
+      }
+      .sendmessage{
+        height: 80%;
+      }
+    }
   }
 }
 </style>
