@@ -37,6 +37,17 @@ export const joinChannel = (uid,channelId) =>
         }
     })
 
+// 加入channel
+export const joinChannelBatch = (uidList,channelId) =>
+    request({
+        url: '/channel/join-batch',
+        method: 'POST',
+        data:{
+            uidList:uidList,
+            channelId:channelId
+        }
+    })
+
 export const getChannelList = () =>
     request({
         url: '/channels/',

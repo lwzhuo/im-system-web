@@ -30,7 +30,7 @@
 <script>
 import { outputError } from '@/utils/exception'
 import { listUser } from '@/api/user'
-import { addMember } from '@/api/channel'
+import { joinChannelBatch } from '@/api/channel'
 
 export default {
   name: "add-member",
@@ -57,7 +57,7 @@ export default {
       .then(response => {
         let users = []
         for(let user of response.data.data) {
-          if(user.id !== this.myId) {
+          if(user.uid !== this.myId) {
             users.push({
               uid: user.uid,
               username: user.username
@@ -76,8 +76,8 @@ export default {
     selectUser(user, index) {
       this.selectedUserList.push(
         {
-          id: user.id,
-          nickname: user.nickname,
+          id: user.uid,
+          username: user.username,
           index: index
         }
       )
@@ -98,18 +98,20 @@ export default {
     },
     doAddMember() {
       this.loadingVisible = true
-      let users = []
+      let uidList = []
       for(let user of this.selectedUserList) {
-        users.push({
-          id: user.id,
-          nickname: user.nickname
-        })
+        uidList.push(user.id)
       }
-      addMember(this.channelId, {
-        admin: JSON.parse(localStorage.getItem('currentUser')).nickname,
-        users: users
-      })
+      joinChannelBatch(uidList,this.channelId)
       .then(response => {
+        if(response.data.code<0){
+          outputError(this, "服务异常")
+        }else{
+          this.$message({
+            message: '添加成功',
+            type: 'success'
+          });
+        }
         this.loadingVisible = false
         this.dialogVisible = false
       })
