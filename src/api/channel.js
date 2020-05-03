@@ -26,6 +26,17 @@ export const getUserChannel = (userId, channelId) =>
         }
     })
 
+// 加入channel
+export const joinChannel = (uid,channelId) =>
+    request({
+        url: '/channel/join',
+        method: 'GET',
+        params:{
+            uid:uid,
+            channelId:channelId
+        }
+    })
+
 export const getChannelList = () =>
     request({
         url: '/channels/',

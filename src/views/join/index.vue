@@ -14,7 +14,7 @@
             <span class="channel-info-key">群组简介:</span>
             <span class="channel-info-value">{{channelInfo.channelSummary}}</span>
           </div>
-          <el-button class="join-button" type="primary" :loading="loadingVisible" @click.native.prevent="">加入</el-button>
+          <el-button class="join-button" type="primary" :loading="loadingVisible" @click.native.prevent="doJoinChannel()">加入</el-button>
         </div>
       </el-form>
     </div>
@@ -23,7 +23,7 @@
 
 <script>
 import { outputError } from '@/utils/exception'
-import {getUserChannel} from '@/api/channel'
+import {getUserChannel,joinChannel} from '@/api/channel'
 export default {
   data() {
     return {
@@ -36,6 +36,26 @@ export default {
     }
   },
   methods: {
+    doJoinChannel(){
+      joinChannel(this.myId,this.$route.params.channelId)
+      .then(response=>{
+        if(response.data.code<0){
+          outputError(this, "服务异常")
+        }else{
+          //执行跳转
+          let responseData = response.data.data
+          let channelId = responseData.channelId
+          let channelType = responseData.channelType
+          this.$router.push({ 
+            name: 'messageDialog', 
+            params: { 
+              channelType: channelType,
+              channelId: channelId, 
+            }
+          })
+        }
+      })
+    }
   },
   created(){
     getUserChannel(this.myId,this.$route.params.channelId)
