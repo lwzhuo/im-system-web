@@ -119,12 +119,21 @@ export default {
       saveMessage(newMessage)
       .then(response => {
         if(response.data.code!=0){
-          this.$message({
+          if(response.data.code==-501){
+            this.$message({
+                showClose: true,
+                message: '你不在此群聊中',
+                type: 'error'
+              })
+          }else{
+            this.$message({
                 showClose: true,
                 message: '服务异常['+response.code+']',
                 type: 'error'
               })
-              return
+          }
+          this.loadingVisible = false
+          return
         }
         this.message = ''
         this.$emit('onMessageSent', response.data.data) // 发送消息触发事件 展示发送的消息

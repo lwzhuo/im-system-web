@@ -55,6 +55,17 @@ export const isAdmin = (channelId) =>
         method: 'GET'
     })
 
+// 离开频道
+export const leftChannel=(channelId,leftUid) =>
+    request({
+        url: '/channel/left',
+        method: 'GET',
+        params:{
+            uid:leftUid,
+            channelId:channelId
+        }
+    })
+
 export const updateUserChannelDisplayName = (channelId, displayName) =>
     request({
         url: '/userChannels/' + channelId,

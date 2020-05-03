@@ -9,14 +9,14 @@
           <i slot="suffix" class="el-input__icon el-icon-search" @click="doSearch"></i>          
         </div>
         <ul>
-          <li v-for="(item, index) in this.userList" @click="selectUser(item, index)">{{ item.nickname }}<span>+</span></li>
+          <li v-for="(item, index) in this.userList" @click="selectUser(item, index)">{{ item.username }}<span>+</span></li>
           <li class="load-more" v-show="searchParams.offset + searchParams.limit < userTotal" @click="loadMoreUser();">加载更多...</li>                                        
         </ul>
       </div>
       <div class="user-list-container right-list">
         <div class="title">已选组成员</div>
         <ul>
-          <li v-for="(item, index) in this.selectedUserList" @click="unselectUser(item, index)">{{ item.nickname }}<span>x</span></li>
+          <li v-for="(item, index) in this.selectedUserList" @click="unselectUser(item, index)">{{ item.username }}<span>x</span></li>
         </ul>
       </div>
     </div>
@@ -29,7 +29,7 @@
 
 <script>
 import { outputError } from '@/utils/exception'
-import { listNonMembers } from '@/api/user'
+import { listUser } from '@/api/user'
 import { addMember } from '@/api/channel'
 
 export default {
@@ -41,8 +41,6 @@ export default {
       dialogVisible: false,      
       searchParams: {
         username: '',
-        limit: 20,
-        offset: 0
       },      
       userList: [],
       selectedUserList: [],
@@ -55,10 +53,19 @@ export default {
     },
     getUserList() {
       this.loadingVisible = true
-      listNonMembers(this.channelId, this.searchParams.username, this.searchParams.limit, this.searchParams.offset)
+      listUser(this.searchParams.username)
       .then(response => {
-        this.userList = [...this.userList, ...response.data.rows]
-        this.userTotal = response.data.total
+        let users = []
+        for(let user of response.data.data) {
+          if(user.id !== this.myId) {
+            users.push({
+              uid: user.uid,
+              username: user.username
+            })
+          }
+        }
+        this.userList = [...this.userList, ...users]
+        this.userTotal = response.data.data.total
         this.loadingVisible = false
       })
       .catch(error => {
@@ -140,7 +147,6 @@ export default {
       this.$on('openDialog', function(action) {
         this.userList = this.selectedUserList = []
         this.dialogVisible = true
-        this.getUserList()
       })
     })
   }
