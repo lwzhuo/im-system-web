@@ -1,12 +1,19 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false" width="400px" v-loading="loadingVisible">
-    <div slot="title" class="dialog-header"><h3>分享</h3></div>
-    <div class="list-container">
+    <div slot="title" class="dialog-header"><h3>{{title}}</h3></div>
+    <div v-if="page=='home'" class="list-container">
       <ul>
-        <li>分享聊天链接</li>
+        <li @click="showShareLinkDialog">邀请成员</li>
         <li>分享聊天记录</li>                                      
       </ul>
-    </div>  
+    </div> 
+    <div v-else-if="page=='shareUrl'" class="list-container">
+      <span>用户{{inviterName}}邀请你进入群聊,点击以下链接即可进入群聊房间:<br>
+            <a :href="url+channelId" target="_blank">{{url+channelId}}</a><br>
+            群聊主题:{{channelName}} <br>
+            群聊简介:{{channelSummary}} <br>
+      </span>
+    </div>
   </el-dialog>
 </template>
 
@@ -16,29 +23,37 @@ import { listMember } from '@/api/channel'
 
 export default {
   name: 'share-list',
-  props: ['channelId', 'channelName'],
+  props: ['userChannel'],
   data() {
     return {
+      title:"分享",
+      inviterName:JSON.parse(localStorage.getItem('currentUser')).username,
+      page:"home",
       dialogVisible: false,
       loadingVisible: false,
-      memberList: [],
-      searchParams: {
-        username: '',
-        limit: 20,
-        offset: 0
-      },
-      memberTotal: 0
+      channelId:this.userChannel.channelId,
+      channelName:this.userChannel.channelName,
+      channelSummary:this.userChannel.summary,
+      url:'http://localhost:8081/#/join/',
     }
   },
   methods: {
+    showShareLinkDialog(){
+      // this.$refs.shareUrl.$emit('openDialog')
+      // this.dialogVisible = false
+      this.page='shareUrl'
+      this.title="邀请成员"
+    }
   },
   mounted: function() {
     this.$nextTick(() => {  
       this.$on('openDialog', function(action) {
+        this.page='home'
+        this.title="分享"
         this.dialogVisible = true
       })
     })
-  }  
+  }
 }
 </script>
 
@@ -64,6 +79,7 @@ export default {
         font-weight: bold;
         float: right;
         display: none;
+        font-size: 5em;
       }
     }
     li:hover {

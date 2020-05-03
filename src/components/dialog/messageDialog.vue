@@ -10,25 +10,25 @@
               </span>
               <span v-else class="el-dropdown-link channel-title">
                 <strong>{{ userChannel.channelName }}</strong>
-                <!-- <svg id="dropdown-icon" t="1528208466548" viewBox="0 0 1024 1024" version="1.1"><path d="M517.688889 796.444444c-45.511111 0-85.333333-17.066667-119.466667-51.2L73.955556 381.155556c-22.755556-22.755556-17.066667-56.888889 5.688888-79.644445 22.755556-22.755556 56.888889-17.066667 79.644445 5.688889l329.955555 364.088889c5.688889 5.688889 17.066667 11.377778 28.444445 11.377778s22.755556-5.688889 34.133333-17.066667l312.888889-364.088889c22.755556-22.755556 56.888889-28.444444 79.644445-5.688889 22.755556 22.755556 28.444444 56.888889 5.688888 79.644445L637.155556 739.555556c-28.444444 39.822222-68.266667 56.888889-119.466667 56.888888 5.688889 0 0 0 0 0z" p-id="1094" fill="#111111"></path></svg> -->
-                <!-- <svg id="dropdown-icon-selected" t="1528208466548" viewBox="0 0 1024 1024" version="1.1"><path d="M517.688889 796.444444c-45.511111 0-85.333333-17.066667-119.466667-51.2L73.955556 381.155556c-22.755556-22.755556-17.066667-56.888889 5.688888-79.644445 22.755556-22.755556 56.888889-17.066667 79.644445 5.688889l329.955555 364.088889c5.688889 5.688889 17.066667 11.377778 28.444445 11.377778s22.755556-5.688889 34.133333-17.066667l312.888889-364.088889c22.755556-22.755556 56.888889-28.444444 79.644445-5.688889 22.755556 22.755556 28.444444 56.888889 5.688888 79.644445L637.155556 739.555556c-28.444444 39.822222-68.266667 56.888889-119.466667 56.888888 5.688889 0 0 0 0 0z" p-id="1094" fill="#418FD6"></path></svg> -->
+                <svg id="dropdown-icon" t="1528208466548" viewBox="0 0 1024 1024" version="1.1"><path d="M517.688889 796.444444c-45.511111 0-85.333333-17.066667-119.466667-51.2L73.955556 381.155556c-22.755556-22.755556-17.066667-56.888889 5.688888-79.644445 22.755556-22.755556 56.888889-17.066667 79.644445 5.688889l329.955555 364.088889c5.688889 5.688889 17.066667 11.377778 28.444445 11.377778s22.755556-5.688889 34.133333-17.066667l312.888889-364.088889c22.755556-22.755556 56.888889-28.444444 79.644445-5.688889 22.755556 22.755556 28.444444 56.888889 5.688888 79.644445L637.155556 739.555556c-28.444444 39.822222-68.266667 56.888889-119.466667 56.888888 5.688889 0 0 0 0 0z" p-id="1094" fill="#111111"></path></svg>
+                <svg id="dropdown-icon-selected" t="1528208466548" viewBox="0 0 1024 1024" version="1.1"><path d="M517.688889 796.444444c-45.511111 0-85.333333-17.066667-119.466667-51.2L73.955556 381.155556c-22.755556-22.755556-17.066667-56.888889 5.688888-79.644445 22.755556-22.755556 56.888889-17.066667 79.644445 5.688889l329.955555 364.088889c5.688889 5.688889 17.066667 11.377778 28.444445 11.377778s22.755556-5.688889 34.133333-17.066667l312.888889-364.088889c22.755556-22.755556 56.888889-28.444444 79.644445-5.688889 22.755556 22.755556 28.444444 56.888889 5.688888 79.644445L637.155556 739.555556c-28.444444 39.822222-68.266667 56.888889-119.466667 56.888888 5.688889 0 0 0 0 0z" p-id="1094" fill="#418FD6"></path></svg>
               </span>
               <!-- 聊天管理 频道名称修改 频道删除 成员添加和删除 -->
-              <!-- <el-dropdown-menu v-if="userChannel.channelType === 2" slot="dropdown">
+              <el-dropdown-menu v-if="userChannel.channelType === 2" slot="dropdown">
                 <template>
                   <template v-if="isAdmin">
-                    <el-dropdown-item command="addMember">添加成员</el-dropdown-item>
                     <el-dropdown-item command="manageMember">成员管理</el-dropdown-item>
-                    <el-dropdown-item command="editTitle" divided>编辑频道标题</el-dropdown-item>
+                    <!-- <el-dropdown-item command="editTitle" divided>编辑频道标题</el-dropdown-item>
                     <el-dropdown-item command="editName">重命名频道</el-dropdown-item>
-                    <el-dropdown-item command="remove" v-if="myId === userChannel.creatorId">删除频道</el-dropdown-item>
+                    <el-dropdown-item command="remove" v-if="myId === userChannel.creatorId">删除频道</el-dropdown-item> -->
                   </template>
-                  <template v-else>
+                  <el-dropdown-item command="addMember">添加成员</el-dropdown-item>
+                  <!-- <template v-else>
                     <el-dropdown-item command="editTitle">编辑频道标题</el-dropdown-item>
                   </template>
-                  <el-dropdown-item command="leave" divided v-if="myId !== userChannel.creatorId">离开频道</el-dropdown-item>
+                  <el-dropdown-item command="leave" divided v-if="myId !== userChannel.creatorId">离开频道</el-dropdown-item> -->
                 </template>
-              </el-dropdown-menu>    -->
+              </el-dropdown-menu>   
             </el-dropdown>
             <!-- 标题处理 分为私聊和群聊 -->
             <!-- <div v-if="userChannel.channelType === 1">
@@ -54,7 +54,7 @@
           </div>
         </div>
         <!-- 转发分享 -->
-        <share-list ref="shareDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></share-list>
+        <share-list ref="shareDlg" :user-channel="userChannel"></share-list>
         <div v-if="userChannel.channelType === 2" class="members-container" @click="showShareDialog">
           <div class="members">
             <svg class="icon" viewBox="0 0 32 32">
