@@ -4,10 +4,12 @@ import LoginView from '@/views/login/index' // 登录页
 import IndexView from '@/views/home/index' // 主页
 import WelcomeView from '@/views/welcome/index' // 欢迎页
 import JoinView from '@/views/join/index' // 加入房间
+import MiniView from '@/views/mini/index' // 精简版
 import TestView from '@/views/test' // 测试
 Vue.use(Router)
 
 const MessageDialog = resolve => require(['@/components/dialog/messageDialog'], resolve)
+const MiniMessageDialog = resolve => require(['@/components/dialog/MiniMessageDialog'], resolve)
 const router = new Router({
   routes: [
     {
@@ -39,6 +41,19 @@ const router = new Router({
       name: 'join',
       component: JoinView,
       meta:{requiresAuth:true}
+    },
+    {
+      path: '/s/:channelId',
+      name: 'mini',
+      component: MiniView,
+      meta:{requiresAuth:true},
+      children:[
+        {
+          path: '/',
+          name: 'miniMessageDialog',
+          component: MiniMessageDialog
+        }
+      ]
     },
     {
       path: '/test',
