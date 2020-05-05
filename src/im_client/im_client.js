@@ -163,6 +163,10 @@ export class IMClient {
           this.handleUnreadMessage(message)
         }
         break
+      case actionMap.CHANNEL_CREATE:
+        if (this.handleChannelCreate) {
+          this.handleChannelCreate(message)
+        }
       case "READ_MESSAGE":
         if(this.handleReadMessage) {
           this.handleReadMessage(message)
@@ -232,6 +236,13 @@ export class IMClient {
   }
   unbindNewMesssage() {
     this.handleNewMessage = null
+  }
+
+  bindChannelCreate(callback) {
+    this.handleChannelCreate = callback
+  }
+  unbindChannelCreate() {
+    this.handleChannelCreate = null
   }
 
   bindConnectionClosed(callback) {

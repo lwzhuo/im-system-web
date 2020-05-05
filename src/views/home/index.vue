@@ -216,6 +216,17 @@ export default {
     selectChannel(channel, index) {
       this.selectedChannelId = channel.channelId
     },
+    onChannelCreate(message){
+      let channelId = message.channelId
+      let channelType = message.createdChannelType
+      let channelName = message.channelName
+      let data = {
+        channelId:channelId,
+        channelType:channelType,
+        channelName:channelName
+      }
+      this.userChannelList.unshift(data)
+    },
     onOnlineStatusChanged(message) {
       if(message.userId === JSON.parse(localStorage.getItem('currentUser')).id) {
         return
@@ -386,6 +397,7 @@ export default {
       const imClient = new IMClient(wsUrl, 30 * 1000)
       this.$store.dispatch('setIMClient', imClient)
       imClient.connect()
+      imClient.bindChannelCreate(this.onChannelCreate)
     },
   },
   doHideChannel(channelId) {
