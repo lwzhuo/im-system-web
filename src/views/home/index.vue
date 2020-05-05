@@ -52,8 +52,24 @@
       <!-- <div class="channel-search-container">
         <div class="search"><input type="text" placeholder="搜索" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
       </div> -->
-      <div class="channel-container" v-bind:style="{height: channelListHeight}">
-        <ul class="nav-channel first-nav-channel">
+      <div class="channel-container first-nav-channel" v-bind:style="{height: channelListHeight}">
+        <ul class="nav-channel">
+          <li class="channel-header">
+            <span>公开群组</span>
+          </li>
+          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 4" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
+            <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType, leaveChannelCallback: leaveChannelCallback, removeChannelCallback: removeChannelCallback }}">
+              <a href="#">
+                <div class="status">
+                  <group-icon :selected="selectedChannelId === item.channelId"></group-icon>
+                </div>
+                <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
+                <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div>
+              </a>
+            </router-link>
+          </li>
+        </ul>
+        <ul class="nav-channel">
           <li class="channel-header">
             <span>群聊</span>
             <button class="add-channel-btn" title="创建群聊" @click="openCreateGroupChannelDlg">+</button>
