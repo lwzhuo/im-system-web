@@ -134,6 +134,7 @@ export default {
             outputError(this, error)
           })          
         } 
+        this.memberCount = 0
         for(let i=0;i<this.userChannel.channelUserList.length;i++){
           let item = this.userChannel.channelUserList[i]
           let uid = item.uid;
