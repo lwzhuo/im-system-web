@@ -2,9 +2,11 @@
   <div class="container" id="messageList" v-loading="loadingVisible">
     <image-viewer ref="imageViewer" :image-url="image.url" :image-width="image.width" :image-height="image.height"></image-viewer>
     <div v-if="hasMoreMessage" class="load-more-message"><span @click="getMessageList(true)">加载更多消息</span></div>
-    <div :id="'message_' + item.id" v-for="(item, index) in this.messageList" :key="item.id">
+    <div :id="'message_' + item.messageId" v-for="(item, index) in this.messageList" :key="item.messageId">
+      <el-checkbox-group v-model="shareMessageList">
       <div class="message-container">
         <div class="message">
+          <el-checkbox v-if="showShareMessageCheckbox" :label="item.messageId"></el-checkbox> 
           <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.fromUid === '00000000000000000000000000000000'}">
             <!-- 用户头像显示 -->
             <div v-if="memberInfo[item.fromUid].avatarUrl!=null&&memberInfo[item.fromUid].avatarUrl!==''" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
@@ -13,7 +15,7 @@
             <!-- 用户在线状态显示 -->
             <div v-if="item.fromUid != '00000000000000000000000000000000'" class="online-status-container">
               <!-- 状态暂时写死离线 -->
-              <status-offline-avatar></status-offline-avatar>
+              <!-- <status-offline-avatar></status-offline-avatar> -->
               <!-- <status-online-avatar v-if="item.senderOnlineStatus === 'online'"></status-online-avatar>
               <status-away-avatar v-else-if="item.senderOnlineStatus === 'away'"></status-away-avatar>
               <status-offline-avatar v-else-if="item.senderOnlineStatus === 'offline'"></status-offline-avatar>
@@ -43,7 +45,9 @@
           <div class="clear-float"></div>
         </div>
       </div>
+      </el-checkbox-group>
     </div>
+    <share-submit v-if="showShareMessageCheckbox" class="share-submit"></share-submit>
   </div>
 </template>
 
@@ -63,7 +67,9 @@ export default {
       myId: JSON.parse(localStorage.getItem('currentUser')).id,
       maxCreateAt: new Date().getTime() ,
       loadingVisible: false,
-      messageList: [],
+      messageList: [],//message列表
+      shareMessageList:[],// 分享messageid列表
+      showShareMessageCheckbox:false,// 分享多选框显示
       hasMoreMessage: true,
       isLoadMore: false,
       messageRemoved: false,
@@ -265,6 +271,7 @@ export default {
   },
   components: { StatusOnlineAvatar, StatusOfflineAvatar, StatusAwayAvatar, StatusDndAvatar,
     ImageViewer: resolve => require(['@/components/message/imageViewer'], resolve),
+    ShareSubmit: resolve => require(['@/components/channel/shareSubmit'],resolve),
   }
 }
 </script>
@@ -402,7 +409,19 @@ export default {
   .clear-float {
     clear: both;
   }
+  .share-submit {
+    position: sticky;             // 位置停靠
+    position: -webkit-sticky;     // 兼容 -webkit 内核的浏览器
+    bottom: 0px;                  // 必须设一个值，否则不生效
+  }
 }
 </style>
 
+<style lang="scss">
+  .message{
+    .el-checkbox__label{
+        display: none;
+      }
+  }
+</style>
 

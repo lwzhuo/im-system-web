@@ -31,11 +31,12 @@ export default {
     flex: 0 0 auto;
     width: 100%;
     z-index: 7;
+    background-color: #FFFFFF;
+    border-top: solid 1px #DFDAD3;
     .toolbar {
       height: 25px;
       padding: 5px 20px;
       display: inline-block;
-      border-top: solid 1px #DFDAD3;
       .btn {
         vertical-align: middle;
         float: right;

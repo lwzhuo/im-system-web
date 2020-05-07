@@ -71,11 +71,7 @@
       </div>
     </div>
     <div class="footer">
-      <!-- 分享确认框 -->
-      <ul class="ul">
-        <!-- <li class="sharesubmit"><share-submit></share-submit></li> -->
-        <li class="sendmessage"><send-message :channel-id="$route.params.channelId" :channel-type="$route.params.channelType" @onMessageSent="showSentMessage"></send-message></li>
-      </ul>
+      <send-message :channel-id="$route.params.channelId" :channel-type="$route.params.channelType" @onMessageSent="showSentMessage"></send-message>
     </div>
   </div>
 </template>
@@ -92,6 +88,8 @@ import SendMessage from '../message/sendMessage'
 export default {
   data() {
     return {
+      shareSelectVisible:false,
+      shareSubmitVisible: false,
       loadingVisible: false,
       memberCount:0,
       userChannel: {},  // 维护channel的信息
@@ -266,7 +264,6 @@ export default {
     MemberList: resolve => require(['@/components/channel/memberList'], resolve),
     MemberManagement: resolve => require(['@/components/channel/manageMember'], resolve),
     ShareList: resolve => require(['@/components/channel/shareList'],resolve),
-    ShareSubmit: resolve => require(['@/components/channel/shareSubmit'],resolve),
   }
 }
 </script>
@@ -395,18 +392,6 @@ export default {
     height: 18%;
     width: 100%;
     z-index: 5;
-    .ul{
-      list-style:none;
-      margin: 0px;
-      padding: 0px;
-      height: 100%;
-      .sharesubmit{
-        height: 20%;
-      }
-      .sendmessage{
-        height: 80%;
-      }
-    }
   }
 }
 </style>
