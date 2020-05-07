@@ -109,6 +109,13 @@ export default {
     padding: 15px 0px 15px 0px;
     color: #8F8B86;
     font-size: 1.1em;
+    .channel-info-value{
+      width:200px;
+      // 以下三行 解决字符数量过多 产生越界的问题
+      word-wrap: break-word;
+      word-break: break-all;
+      overflow: hidden;
+    }
   }
   .join-button {
     width: 100%;

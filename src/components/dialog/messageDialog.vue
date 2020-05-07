@@ -39,6 +39,7 @@
             <div v-else>
               <div class="display-name">{{ userChannel.channelDisplayName }}</div>
             </div> -->
+            <div class="display-name">{{ userChannel.summary }}</div>
           </div>
         </span>
         <edit-channel-title ref="editChannelTitleDlg" @onEditTitleFinished="onEditTitleFinished"></edit-channel-title>
@@ -55,7 +56,7 @@
         </div>
         <!-- 转发分享 -->
         <share-list ref="shareDlg" :user-channel="userChannel"></share-list>
-        <div v-if="userChannel.channelType === 2" class="members-container" @click="showShareDialog">
+        <div v-if="userChannel.channelType === 2 || userChannel.channelType==4" class="members-container" @click="showShareDialog">
           <div class="members">
             <svg class="icon" viewBox="0 0 32 32">
 	            <path d="M18.84 19.181v6.971l11.56-10.704-11.56-10.328v6.186c-14.040 0-17.24 15.574-17.24 15.574 3.973-7.024 9.619-7.699 17.24-7.699z"></path>
