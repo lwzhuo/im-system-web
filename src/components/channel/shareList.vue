@@ -4,7 +4,7 @@
     <div v-if="page=='home'" class="list-container">
       <ul>
         <li @click="showShareLinkDialog">邀请成员</li>
-        <li>分享聊天记录</li>                                      
+        <li @click="showShareMessageCheckbox">分享聊天记录</li>                                      
       </ul>
     </div> 
     <div v-else-if="page=='shareUrl'" class="list-container">
@@ -38,11 +38,17 @@ export default {
     }
   },
   methods: {
+    // 显示分享链接的对话框
     showShareLinkDialog(){
       // this.$refs.shareUrl.$emit('openDialog')
       // this.dialogVisible = false
       this.page='shareUrl'
       this.title="邀请成员"
+    },
+    // 显示分享消息的多选框
+    showShareMessageCheckbox(){
+      this.$emit('onShowShareMessageCheckbox')
+      this.dialogVisible = false
     }
   },
   mounted: function() {

@@ -6,7 +6,7 @@
       <el-checkbox-group v-model="shareMessageList">
       <div class="message-container">
         <div class="message">
-          <el-checkbox v-if="showShareMessageCheckbox" :label="item.messageId"></el-checkbox> 
+          <el-checkbox v-if="shareMessageCheckbox" :label="item.messageId"></el-checkbox> 
           <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.fromUid === '00000000000000000000000000000000'}">
             <!-- 用户头像显示 -->
             <div v-if="memberInfo[item.fromUid].avatarUrl!=null&&memberInfo[item.fromUid].avatarUrl!==''" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
@@ -47,7 +47,7 @@
       </div>
       </el-checkbox-group>
     </div>
-    <share-submit v-if="showShareMessageCheckbox" class="share-submit"></share-submit>
+    <share-submit v-if="shareMessageCheckbox" class="share-submit" @onCloseShareMessageCheckbox="closeShareMessageCheckbox" :channelId="channelId" :shareMessageList="shareMessageList"></share-submit>
   </div>
 </template>
 
@@ -61,7 +61,7 @@ import StatusAwayAvatar from '@/components/svg/statusAwayAvatar'
 
 export default {
   name: "message-list",
-  props: ['channelId', 'userChannel','memberInfo'],
+  props: ['channelId', 'userChannel','memberInfo','shareMessageCheckbox'],
   data() {
     return {
       myId: JSON.parse(localStorage.getItem('currentUser')).id,
@@ -69,7 +69,6 @@ export default {
       loadingVisible: false,
       messageList: [],//message列表
       shareMessageList:[],// 分享messageid列表
-      showShareMessageCheckbox:false,// 分享多选框显示
       hasMoreMessage: true,
       isLoadMore: false,
       messageRemoved: false,
@@ -235,6 +234,10 @@ export default {
       this.image.width = width
       this.image.height = height
       this.$refs.imageViewer.$emit('openDialog')
+    },
+    closeShareMessageCheckbox(){
+      this.shareMessageList = []
+      this.$emit("onCloseShareMessageCheckbox")
     }
   },
   created() {

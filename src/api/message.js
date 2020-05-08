@@ -41,3 +41,12 @@ export const removeMessage = (messageId, channelId, toUserId) =>
             toUserId: toUserId
         }
     })
+
+export const shareMessage = (channelId,messageIdList)=>
+    request({
+        url:'/message/share/'+channelId,
+        method: 'POST',
+        data:{
+            messageIdList:messageIdList
+        }
+    })

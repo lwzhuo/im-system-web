@@ -55,7 +55,7 @@
           </div>
         </div>
         <!-- 转发分享 -->
-        <share-list ref="shareDlg" :user-channel="userChannel"></share-list>
+        <share-list ref="shareDlg" :user-channel="userChannel" @onShowShareMessageCheckbox = "showShareMessageCheckbox"></share-list>
         <div v-if="userChannel.channelType === 2 || userChannel.channelType==4" class="members-container" @click="showShareDialog">
           <div class="members">
             <svg class="icon" viewBox="0 0 32 32">
@@ -67,7 +67,7 @@
     </div>
     <div class="body-container" v-if="$store.getters.imClient">
       <div class="body">
-        <message-list ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel" :member-info="memberInfo"></message-list>
+        <message-list ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel" :member-info="memberInfo" :share-message-checkbox="shareMessageCheckbox" @onCloseShareMessageCheckbox="closeShareMessageCheckbox"></message-list>
       </div>
     </div>
     <div class="footer">
@@ -88,8 +88,7 @@ import SendMessage from '../message/sendMessage'
 export default {
   data() {
     return {
-      shareSelectVisible:false,
-      shareSubmitVisible: false,
+      shareMessageCheckbox:false,
       loadingVisible: false,
       memberCount:0,
       userChannel: {},  // 维护channel的信息
@@ -249,6 +248,12 @@ export default {
     },
     showShareDialog() {
       this.$refs.shareDlg.$emit('openDialog')
+    },
+    showShareMessageCheckbox(){
+      this.shareMessageCheckbox = true
+    },
+    closeShareMessageCheckbox(){
+      this.shareMessageCheckbox = false
     }
   },
   created() {
