@@ -47,7 +47,8 @@
       </div>
       </el-checkbox-group>
     </div>
-    <share-submit v-if="shareMessageCheckbox" class="share-submit" @onCloseShareMessageCheckbox="closeShareMessageCheckbox" :channelId="channelId" :shareMessageList="shareMessageList"></share-submit>
+    <share-submit v-if="shareMessageCheckbox" class="share-submit" @onCloseShareMessageCheckbox="closeShareMessageCheckbox" @onShowShareMsgDialog="showShareMsgDialog" :channelId="channelId" :shareMessageList="shareMessageList"></share-submit>
+    <share-msg-dialog ref="shareMsgDlg" :shareData="shareData" :userChannel="userChannel"></share-msg-dialog>
   </div>
 </template>
 
@@ -69,6 +70,8 @@ export default {
       loadingVisible: false,
       messageList: [],//message列表
       shareMessageList:[],// 分享messageid列表
+      shareMsgDialog:false,
+      shareData:{},
       hasMoreMessage: true,
       isLoadMore: false,
       messageRemoved: false,
@@ -238,6 +241,10 @@ export default {
     closeShareMessageCheckbox(){
       this.shareMessageList = []
       this.$emit("onCloseShareMessageCheckbox")
+    },
+    showShareMsgDialog(data){
+      this.shareData = data
+      this.$refs.shareMsgDlg.$emit('openDialog')
     }
   },
   created() {
@@ -275,6 +282,7 @@ export default {
   components: { StatusOnlineAvatar, StatusOfflineAvatar, StatusAwayAvatar, StatusDndAvatar,
     ImageViewer: resolve => require(['@/components/message/imageViewer'], resolve),
     ShareSubmit: resolve => require(['@/components/channel/shareSubmit'],resolve),
+    ShareMsgDialog: resolve => require(['@/components/channel/ShareMsgDialog'],resolve),
   }
 }
 </script>

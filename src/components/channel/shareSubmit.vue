@@ -28,7 +28,9 @@ export default {
         if(response.data.code<0)
           outputError(this, "服务异常")
         let responseData = response.data.data
-        console.log(responseData)
+        let shareId = responseData.shareId
+        this.$emit("onShowShareMsgDialog",responseData)
+        this.closeBar()
       }).catch(error => {
         outputError(this, error)
       })
@@ -36,7 +38,7 @@ export default {
     closeBar(){
       this.$emit("onCloseShareMessageCheckbox")
     }
-  }
+  },
 }
 </script>
 
