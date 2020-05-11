@@ -4,31 +4,23 @@
       <div class="title-container">
         <span>
           <div class="title">
-            <el-dropdown trigger="click" @command="handleCommand">
-              <span v-if="userChannel.channelType === 1" class="el-dropdown-link channel-title">
-                <strong>{{ userChannel.channelName }}</strong>
-              </span>
-              <span v-else class="el-dropdown-link channel-title">
-                <strong>{{ userChannel.channelName }}</strong>
-              </span>
-              <!-- 聊天管理 频道名称修改 频道删除 成员添加和删除 -->
-              <el-dropdown-menu v-if="userChannel.channelType === 2" slot="dropdown">
-              </el-dropdown-menu>   
-            </el-dropdown>
+            <strong>用户 {{shareUserName}} 分享群组「{{ userChannel.channelName }}」 的聊天记录</strong>
+            <br>
+            <span>聊天记录关键词 {{keyword}}</span>
           </div>
         </span>        
       </div>
     </div>
     <div class="body-container" v-if="$store.getters.imClient">
       <div class="body">
-        <message-list ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel" :member-info="memberInfo"></message-list>
+        <message-list ref="messageList" :channel-id="channelId" :user-channel="userChannel" :member-info="memberInfo" :useShareMsg="true" :shareMsg="shareMsg"></message-list>
       </div>
     </div>
     <div class="footer">
       <!-- 分享确认框 -->
       <ul class="ul">
         <!-- <li class="sharesubmit"><share-submit></share-submit></li> -->
-        <li class="sendmessage"><send-message :channel-id="$route.params.channelId" :channel-type="$route.params.channelType" @onMessageSent="showSentMessage"></send-message></li>
+        <!-- <li class="sendmessage"><send-message :channel-id="channelId" :channel-type="channelType" @onMessageSent="showSentMessage"></send-message></li> -->
       </ul>
     </div>
   </div>
@@ -37,6 +29,7 @@
 <script>
 import { outputError } from '@/utils/exception'
 import { getUserChannel, isAdmin, leaveChannel, removeChannel } from '@/api/channel'
+import { getShareMessage } from '@/api/message'
 import StatusOnlineIcon from '@/components/svg/statusOnlineIcon'
 import StatusOfflineIcon from '@/components/svg/statusOfflineIcon'
 import StatusAwayIcon from '@/components/svg/statusAwayIcon'
@@ -52,6 +45,11 @@ export default {
       memberInfo:{},    // 维护channel的用户列表 使用uid作为key进行访问
       sentMessage: null,
       isAdmin: false,
+      shareMsg: {},
+      shareUserName:"",
+      keyword:"",
+      channelId:'',
+      channelType:'',
       myId: JSON.parse(localStorage.getItem('currentUser')).id,
       myName: JSON.parse(localStorage.getItem('currentUser')).username
     }
@@ -62,53 +60,72 @@ export default {
     },
     // 初始化页面
     initPage() {
-      if(this.$route.params.channelId === undefined) {
+      if(this.$route.params.shareId=== undefined) {
         return
       }
-
-      this.loadingVisible = true
-      const channelId = this.$route.params.channelId
-      this.$store.dispatch('setCurrentChannelId', channelId)
-      this.initIMClient()
-      getUserChannel(this.myId, channelId) // 获取当前channel信息
-      .then(response => {   
+      // 拉取分享的消息
+      getShareMessage(this.$route.params.shareId)
+      .then(response=>{
         if(response.data.code<0){
           outputError(this, "服务异常")
         }
-        this.userChannel = response.data.data
-        // 群聊逻辑处理
-        if (this.userChannel.channelType === 2) {
-          isAdmin(channelId)
-          .then(response => {
-            this.isAdmin = response.data.data
-            this.loadingVisible = false
-          })
-          .catch(error => {
-            this.loadingVisible = false
-            outputError(this, error)
-          })          
-        } 
-        for(let i=0;i<this.userChannel.channelUserList.length;i++){
-          let item = this.userChannel.channelUserList[i]
-          let uid = item.uid;
-          if(item.status==1)
-            this.memberCount++
-          this.memberInfo[uid] = {
-            uid:uid,
-            username:item.userName,
-            avatarUrl:item.avatarUrl,
-            joinTime:item.joinTime,
-            leftTime:item.leftTime,
-            userType:item.userType,
-            status:item.status
+        let responseData = response.data.data
+        for(let i=0;i<responseData.messages.length;i++){
+          let msgType = responseData.messages[i].msgType;
+          if(msgType==3||msgType==4){
+            responseData.messages[i].msg = JSON.parse(responseData.messages[i].msg)
           }
         }
-        this.loadingVisible = false
-      })
-      .catch(error => {
+        this.shareMsg = responseData.messages
+        this.channelId = responseData.channelId
+        this.shareUserName = responseData.shareUserName
+        this.keyword = responseData.keyword.split(";").join(" ")
+        this.loadingVisible = true
+        this.$store.dispatch('setCurrentChannelId', this.channelId)
+        this.initIMClient()
+        getUserChannel(this.myId, this.channelId) // 获取当前channel信息
+        .then(response => {   
+          if(response.data.code<0){
+            outputError(this, "服务异常")
+          }
+          this.userChannel = response.data.data
+          // 群聊逻辑处理
+          if (this.userChannel.channelType === 2) {
+            isAdmin(this.channelId)
+            .then(response => {
+              this.isAdmin = response.data.data
+              this.loadingVisible = false
+            })
+            .catch(error => {
+              this.loadingVisible = false
+              outputError(this, error)
+            })          
+          } 
+          for(let i=0;i<this.userChannel.channelUserList.length;i++){
+            let item = this.userChannel.channelUserList[i]
+            let uid = item.uid;
+            if(item.status==1)
+              this.memberCount++
+            this.memberInfo[uid] = {
+              uid:uid,
+              username:item.userName,
+              avatarUrl:item.avatarUrl,
+              joinTime:item.joinTime,
+              leftTime:item.leftTime,
+              userType:item.userType,
+              status:item.status
+            }
+          }
+          this.loadingVisible = false
+        })
+        .catch(error => {
+          this.loadingVisible = false
+          outputError(this, error)
+        })
+      }).catch(error => {
         this.loadingVisible = false
         outputError(this, error)
-      })
+      })  
     },
     onMembersCountChanged(message) {
       if(this.$route.params.channelId === message.channelId) {

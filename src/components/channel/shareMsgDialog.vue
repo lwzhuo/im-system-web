@@ -26,7 +26,7 @@ export default {
       keyword:" ",
       dialogVisible: false,
       loadingVisible: false,
-      url:'http://localhost:8081/#/msg/',
+      url:'http://localhost:8081/#/s/',
     }
   },
   methods: {

@@ -62,7 +62,7 @@ import StatusAwayAvatar from '@/components/svg/statusAwayAvatar'
 
 export default {
   name: "message-list",
-  props: ['channelId', 'userChannel','memberInfo','shareMessageCheckbox'],
+  props: ['channelId', 'userChannel','memberInfo','shareMessageCheckbox','useShareMsg','shareMsg'],
   data() {
     return {
       myId: JSON.parse(localStorage.getItem('currentUser')).id,
@@ -216,8 +216,15 @@ export default {
         return
       }
       this.maxCreateAt = new Date().getTime()
-      this.messageList = []
-      this.getMessageList(false)
+      this.messageList = []      
+      // 直接使用分享的消息
+      if(this.useShareMsg){
+        this.hasMoreMessage = false
+        this.messageList = this.shareMsg
+      }else{
+        // 正常拉取消息
+        this.getMessageList(false)
+      }
     },
     isImage(fileExtension) {
       let extension = fileExtension.toLowerCase()
@@ -248,7 +255,14 @@ export default {
     }
   },
   created() {
-    this.getMessageList(false)
+    // 直接使用分享的消息
+    if(this.useShareMsg){
+      this.hasMoreMessage = false
+      this.messageList = this.shareMsg
+    }else{
+      // 正常拉取消息
+      this.getMessageList(false)
+    }
     let imClient = this.$store.getters.imClient
     imClient.bindNewMessage(this.onNewMessage)
     imClient.bindReconnectSuccessed(this.onReconnected)

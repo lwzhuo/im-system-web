@@ -382,11 +382,6 @@ export default {
     .catch(error => {
       console.error(error)
     })
-    if(this.$route.params.channelId) {
-      this.selectedChannelId = this.$route.params.channelId
-    } else {
-      this.$router.push({ name: 'welcome' })
-    }
   },
   // 执行权限认证 拦截
   beforeRouteEnter(to, from, next) {    

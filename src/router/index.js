@@ -43,7 +43,7 @@ const router = new Router({
       meta:{requiresAuth:true}
     },
     {
-      path: '/s/:channelId',
+      path: '/s/:shareId',
       name: 'mini',
       component: MiniView,
       meta:{requiresAuth:true},

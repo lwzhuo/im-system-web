@@ -50,3 +50,9 @@ export const shareMessage = (channelId,messageIdList)=>
             messageIdList:messageIdList
         }
     })
+
+export const getShareMessage = (shareId)=>
+    request({
+        url:'/message/get-share/'+shareId,
+        method: 'GET'
+    })
