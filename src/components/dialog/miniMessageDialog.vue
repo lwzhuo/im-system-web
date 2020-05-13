@@ -6,7 +6,7 @@
           <div class="title">
             <strong>用户 {{shareUserName}} 分享群组「{{ userChannel.channelName }}」 的聊天记录</strong>
             <br>
-            <span>聊天记录关键词 {{keyword}}</span>
+            <span>聊天记录关键词: {{keyword}}</span>
           </div>
         </span>        
       </div>

@@ -1,116 +1,119 @@
 <template>
   <el-container class="body-container">
-    <div class="sidebar">
-      <div class="header">
-        <span id="status-dropdown">
-          <div class="avatar status-selector">
-            <img v-if="realAvatarUrl" :src="realAvatarUrl">
-            <!-- <span v-else>{{ userInfo.firstLetterOfName }}</span> 暂时使用默认头像--> 
-            <span v-else style="width: 32px; height:32px;"><img class="status-wrapper-image" src="../../assets/images/avatar.png" /></span>
-            <!-- <span class="status">
-              <div class="icon-container">
-                <status-online-avatar v-if="onlineStatus === 'online'"></status-online-avatar>
-                <status-away-avatar v-else-if="onlineStatus === 'away'"></status-away-avatar>
-                <status-offline-avatar v-else-if="onlineStatus === 'offline'"></status-offline-avatar>
-                <status-dnd-avatar v-else="onlineStatus === 'dnd'"></status-dnd-avatar>
-              </div>
-            </span>
-            <div class="status-edit">
-              <el-dropdown trigger="click" @command="handleOnlineStatus">
-                <span>
-                  <svg t="1525682970585" viewBox="0 0 1024 1024" version="1.1" p-id="1166" width="13" height="13"><path d="M180.177 258.603c-32.209 0-49.892 39.532-29.407 65.799l316.399 405.35c23.526 30.156 67.296 30.156 90.824 0l316.079-405.394c20.485-26.227 2.8-65.757-29.408-65.757l-664.487 0z" p-id="1167" fill="#111111"></path></svg>
-                </span>
-                <el-dropdown-menu slot="dropdown" style="margin-top: -15px;">
-                  <el-dropdown-item command="online">在线</el-dropdown-item>
-                  <el-dropdown-item command="away">离开</el-dropdown-item>
-                  <el-dropdown-item command="dnd">
-                    <div>请勿打扰</div>
-                    <div class="status-tooltip">停用推送通知</div>
-                  </el-dropdown-item>
-                  <el-dropdown-item command="offline">离线</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div> -->
-          </div>
-        </span>
-        <h4 class="username">{{ userInfo.username }}</h4>
-        <a class="dropdown-icon" title="主菜单">
-          <el-dropdown trigger="click" @command="handleCommand">
-            <span>
-              <svg width="16px" height="10px" viewBox="0 0 16 10" version="1.1"><g stroke="none" stroke-width="1" fill="inherit" fill-rule="evenodd"><g transform="translate(-188.000000, -38.000000)" fill-rule="nonzero" fill="inherit"><g><g><g transform="translate(188.000000, 38.000000)"><path d="M15.5,0 C15.776,0 16,0.224 16,0.5 L16,1.5 C16,1.776 15.776,2 15.5,2 L0.5,2 C0.224,2 0,1.776 0,1.5 L0,0.5 C0,0.224 0.224,0 0.5,0 L15.5,0 Z M15.5,4 C15.776,4 16,4.224 16,4.5 L16,5.5 C16,5.776 15.776,6 15.5,6 L0.5,6 C0.224,6 0,5.776 0,5.5 L0,4.5 C0,4.224 0.224,4 0.5,4 L15.5,4 Z M15.5,8 C15.776,8 16,8.224 16,8.5 L16,9.5 C16,9.776 15.776,10 15.5,10 L0.5,10 C0.224,10 0,9.776 0,9.5 L0,8.5 C0,8.224 0.224,8 0.5,8 L15.5,8 Z"></path></g></g></g></g></g></svg>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="editPersonalInfo">账号设置</el-dropdown-item>
-              <!-- <el-dropdown-item command="changePassword">修改密码</el-dropdown-item> -->
-              <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </a>
-        <edit-personal-info ref="editPersonalInfoDlg"></edit-personal-info>
-        <!-- <change-password ref="changePasswordDlg"></change-password> -->
+    <el-scrollbar>
+      <div class="sidebar">
+        <div class="header">
+          <span id="status-dropdown">
+            <div class="avatar status-selector">
+              <img v-if="realAvatarUrl" :src="realAvatarUrl">
+              <!-- <span v-else>{{ userInfo.firstLetterOfName }}</span> 暂时使用默认头像--> 
+              <span v-else style="width: 32px; height:32px;"><img class="status-wrapper-image" src="../../assets/images/avatar.png" /></span>
+              <!-- <span class="status">
+                <div class="icon-container">
+                  <status-online-avatar v-if="onlineStatus === 'online'"></status-online-avatar>
+                  <status-away-avatar v-else-if="onlineStatus === 'away'"></status-away-avatar>
+                  <status-offline-avatar v-else-if="onlineStatus === 'offline'"></status-offline-avatar>
+                  <status-dnd-avatar v-else="onlineStatus === 'dnd'"></status-dnd-avatar>
+                </div>
+              </span>
+              <div class="status-edit">
+                <el-dropdown trigger="click" @command="handleOnlineStatus">
+                  <span>
+                    <svg t="1525682970585" viewBox="0 0 1024 1024" version="1.1" p-id="1166" width="13" height="13"><path d="M180.177 258.603c-32.209 0-49.892 39.532-29.407 65.799l316.399 405.35c23.526 30.156 67.296 30.156 90.824 0l316.079-405.394c20.485-26.227 2.8-65.757-29.408-65.757l-664.487 0z" p-id="1167" fill="#111111"></path></svg>
+                  </span>
+                  <el-dropdown-menu slot="dropdown" style="margin-top: -15px;">
+                    <el-dropdown-item command="online">在线</el-dropdown-item>
+                    <el-dropdown-item command="away">离开</el-dropdown-item>
+                    <el-dropdown-item command="dnd">
+                      <div>请勿打扰</div>
+                      <div class="status-tooltip">停用推送通知</div>
+                    </el-dropdown-item>
+                    <el-dropdown-item command="offline">离线</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </div> -->
+            </div>
+          </span>
+          <h4 class="username">{{ userInfo.username }}</h4>
+          <a class="dropdown-icon" title="主菜单">
+            <el-dropdown trigger="click" @command="handleCommand">
+              <span>
+                <svg width="16px" height="10px" viewBox="0 0 16 10" version="1.1"><g stroke="none" stroke-width="1" fill="inherit" fill-rule="evenodd"><g transform="translate(-188.000000, -38.000000)" fill-rule="nonzero" fill="inherit"><g><g><g transform="translate(188.000000, 38.000000)"><path d="M15.5,0 C15.776,0 16,0.224 16,0.5 L16,1.5 C16,1.776 15.776,2 15.5,2 L0.5,2 C0.224,2 0,1.776 0,1.5 L0,0.5 C0,0.224 0.224,0 0.5,0 L15.5,0 Z M15.5,4 C15.776,4 16,4.224 16,4.5 L16,5.5 C16,5.776 15.776,6 15.5,6 L0.5,6 C0.224,6 0,5.776 0,5.5 L0,4.5 C0,4.224 0.224,4 0.5,4 L15.5,4 Z M15.5,8 C15.776,8 16,8.224 16,8.5 L16,9.5 C16,9.776 15.776,10 15.5,10 L0.5,10 C0.224,10 0,9.776 0,9.5 L0,8.5 C0,8.224 0.224,8 0.5,8 L15.5,8 Z"></path></g></g></g></g></g></svg>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="editPersonalInfo">账号设置</el-dropdown-item>
+                <!-- <el-dropdown-item command="changePassword">修改密码</el-dropdown-item> -->
+                <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </a>
+          <edit-personal-info ref="editPersonalInfoDlg"></edit-personal-info>
+          <!-- <change-password ref="changePasswordDlg"></change-password> -->
+        </div>
+        <!-- <div class="channel-search-container">
+          <div class="search"><input type="text" placeholder="搜索" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
+        </div> -->
+        <div class="channel-container first-nav-channel" v-bind:style="{height: channelListHeight}">
+          <ul class="nav-channel">
+            <li class="channel-header">
+              <span>公开群组</span>
+            </li>
+            <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 4" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
+              <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType, leaveChannelCallback: leaveChannelCallback, removeChannelCallback: removeChannelCallback }}">
+                <a href="#">
+                  <div class="status">
+                    <group-icon :selected="selectedChannelId === item.channelId"></group-icon>
+                  </div>
+                  <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
+                  <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div>
+                </a>
+              </router-link>
+            </li>
+          </ul>
+          <ul class="nav-channel">
+            <li class="channel-header">
+              <span>群聊</span>
+              <button class="add-channel-btn" title="创建群聊" @click="openCreateGroupChannelDlg">+</button>
+              <create-group-channel ref="createGroupChanneDlg" @onChannelCreated="onGroupChannelCreated"></create-group-channel>
+            </li>
+            <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 2" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
+              <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType, leaveChannelCallback: leaveChannelCallback, removeChannelCallback: removeChannelCallback }}">
+                <a href="#">
+                  <div class="status">
+                    <group-icon :selected="selectedChannelId === item.channelId"></group-icon>
+                  </div>
+                  <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
+                  <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div>
+                </a>
+              </router-link>
+            </li>
+          </ul>
+          <ul class="nav-channel">
+            <li class="channel-header">
+              <span>私聊</span>
+              <button class="add-channel-btn" title="创建私聊" @click="openCreatePrivateChannelDlg">+</button>
+              <create-private-channel ref="createPrivateChanneDlg" @onChannelCreated="onPrivateChannelCreated"></create-private-channel>
+            </li>
+            <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 1" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
+              <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType }}">
+                <div class="has-close">
+                  <div class="status">
+                    <status-online-icon v-if="item.toUserOnlineStatus === 'online'"></status-online-icon>
+                    <status-away-icon v-else-if="item.toUserOnlineStatus === 'away'"></status-away-icon>
+                    <status-offline-icon v-else-if="item.toUserOnlineStatus === 'offline'"></status-offline-icon>
+                    <status-dnd-icon v-else="item.toUserOnlineStatus === 'dnd'"></status-dnd-icon>
+                  </div>
+                  <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
+                  <!-- <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div> -->
+                  <!-- <span class="btn-close" @click="doHideChannel(item.channelId)">×</span> -->
+                </div>
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </div>
-      <!-- <div class="channel-search-container">
-        <div class="search"><input type="text" placeholder="搜索" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
-      </div> -->
-      <div class="channel-container first-nav-channel" v-bind:style="{height: channelListHeight}">
-        <ul class="nav-channel">
-          <li class="channel-header">
-            <span>公开群组</span>
-          </li>
-          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 4" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
-            <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType, leaveChannelCallback: leaveChannelCallback, removeChannelCallback: removeChannelCallback }}">
-              <a href="#">
-                <div class="status">
-                  <group-icon :selected="selectedChannelId === item.channelId"></group-icon>
-                </div>
-                <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
-                <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div>
-              </a>
-            </router-link>
-          </li>
-        </ul>
-        <ul class="nav-channel">
-          <li class="channel-header">
-            <span>群聊</span>
-            <button class="add-channel-btn" title="创建群聊" @click="openCreateGroupChannelDlg">+</button>
-            <create-group-channel ref="createGroupChanneDlg" @onChannelCreated="onGroupChannelCreated"></create-group-channel>
-          </li>
-          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 2" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
-            <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType, leaveChannelCallback: leaveChannelCallback, removeChannelCallback: removeChannelCallback }}">
-              <a href="#">
-                <div class="status">
-                  <group-icon :selected="selectedChannelId === item.channelId"></group-icon>
-                </div>
-                <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
-                <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div>
-              </a>
-            </router-link>
-          </li>
-        </ul>
-        <ul class="nav-channel">
-          <li class="channel-header">
-            <span>私聊</span>
-            <button class="add-channel-btn" title="创建私聊" @click="openCreatePrivateChannelDlg">+</button>
-            <create-private-channel ref="createPrivateChanneDlg" @onChannelCreated="onPrivateChannelCreated"></create-private-channel>
-          </li>
-          <li class="channel-item" v-for="(item, index) in this.userChannelList" v-if="item.channelType == 1" :key="item.channelId" :class="{'channel-item channel-item-active' : selectedChannelId === item.channelId}" @click="selectChannel(item, index)">
-            <router-link :to="{ name: 'messageDialog', params: { channelId: item.channelId, channelType: item.channelType }}">
-              <div class="has-close">
-                <div class="status">
-                  <status-online-icon v-if="item.toUserOnlineStatus === 'online'"></status-online-icon>
-                  <status-away-icon v-else-if="item.toUserOnlineStatus === 'away'"></status-away-icon>
-                  <status-offline-icon v-else-if="item.toUserOnlineStatus === 'offline'"></status-offline-icon>
-                  <status-dnd-icon v-else="item.toUserOnlineStatus === 'dnd'"></status-dnd-icon>
-                </div>
-                <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
-                <!-- <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div> -->
-                <!-- <span class="btn-close" @click="doHideChannel(item.channelId)">×</span> -->
-              </div>
-            </router-link>
-          </li>
-        </ul>
-      </div>
-    </div>
+    </el-scrollbar>
+    
     <div class="content">
       <transition>
         <keep-alive>
@@ -851,4 +854,10 @@ export default {
   color: #7C7A74;
   margin-top: -15px;
 }
+</style>
+
+<style lang="scss">
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
 </style>
