@@ -1,6 +1,6 @@
 <template>
   <el-container class="body-container">
-    <el-scrollbar>
+    <el-scrollbar style="background-color: #1C5CB9;">
       <div class="sidebar">
         <div class="header">
           <span id="status-dropdown">
