@@ -1,7 +1,10 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false" width="1000px" v-loading="loadingVisible">
     <div slot="title" class="dialog-header"><h3>聊天记录查找结果</h3></div>
-    <div :id="'message_' + item.messageId" v-for="(item, index) in messageSearchRes" :key="item.messageId">
+    <div v-if="messageSearchRes.length==0">
+      <center>无结果</center>
+    </div>
+    <div v-else :id="'message_' + item.messageId" v-for="(item, index) in messageSearchRes" :key="item.messageId">
       <div class="message-container">
         <div class="message">
           <div class="message-content">
@@ -55,7 +58,6 @@ export default {
         this.dialogVisible = true
       })
     })
-    console.log(this.messageSearchRes)
   }
 }
 </script>
