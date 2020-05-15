@@ -18,7 +18,7 @@
                 <template>
                   <template v-if="isAdmin">
                     <!-- <el-dropdown-item command="manageMember">成员管理</el-dropdown-item> -->
-                    <el-dropdown-item command="editTitle" divided>编辑频道标题</el-dropdown-item>
+                    <!-- <el-dropdown-item command="editTitle" divided>编辑频道标题</el-dropdown-item> -->
                     <!-- <el-dropdown-item command="editName">重命名频道</el-dropdown-item>
                     <el-dropdown-item command="remove" v-if="myId === userChannel.creatorId">删除频道</el-dropdown-item> -->
                   </template>
@@ -47,6 +47,9 @@
         <add-member ref="addChannelMemberDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></add-member>
         <member-list ref="memberListDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" :member-info="memberInfo"></member-list>
         <member-management ref="memberManagementDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" @onOpenAddMemberDlg="doOpenAddMemberDlg"></member-management>
+        <div class="channel-search-container">
+          <div class="search"><input type="text" placeholder="搜索聊天记录" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
+        </div>
         <!-- 成员管理 -->
         <div v-if="userChannel.channelType === 2" class="members-container" @click="showMemberList">
           <div class="members">
@@ -95,6 +98,7 @@ export default {
       memberInfo:{},    // 维护channel的用户列表 使用uid作为key进行访问
       sentMessage: null,
       isAdmin: false,
+      searchKey: '',
       myId: JSON.parse(localStorage.getItem('currentUser')).id,
       myName: JSON.parse(localStorage.getItem('currentUser')).username
     }
@@ -254,7 +258,35 @@ export default {
     },
     closeShareMessageCheckbox(){
       this.shareMessageCheckbox = false
-    }
+    },
+    doSearchChannel() {
+      if(!this.searchKey.trim()) {
+        return
+      }
+      this.userChannelList = []
+      searchUserChannel(this.userInfo.id, this.searchKey)
+      .then(response => {
+        this.userChannelList = response.data
+      })
+      .catch(error => {
+        outputError(this, error)
+      })        
+    },
+    onSearchInputKeyUp(event) {
+      if(!this.searchKey.trim()) {
+        listUserChannels(this.userInfo.id, USER_CHANNEL_LIST_SIZE)
+        .then(response => {
+          this.userChannelList = response.data
+        })
+        .catch(error => {
+          outputError(this, error)
+        })
+        return
+      }
+      if(event.keyCode === 13) {
+        this.doSearchChannel()
+      }
+    },
   },
   created() {
     this.initPage() // 初始化页面
@@ -340,7 +372,7 @@ export default {
       }
       .members-container {
         float: right;
-        padding: 0 50px 0 0;
+        padding: 0 20px 0 0;
         .members {
           border-radius: 20px;
           margin-top: 5px;
@@ -399,5 +431,46 @@ export default {
     z-index: 5;
   }
 }
+.channel-search-container {
+    float: right;
+    height: 28px;
+    padding: 10px 20px 0 5px;
+    width: 210px;
+    .search {
+      padding: 0 0 0 5px;
+      background-color: #F6F5F4;
+      height: 28px;
+      line-height: 28px;
+      vertical-align: middle;
+      border-radius: 3px;
+      i {
+        color: #BBBBBB;
+        cursor: pointer;
+      }
+      input {
+        margin: 0 0 0 4px;
+        width: 177px;
+        outline: 0;
+        border: none;
+        background-color: transparent;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        color: #000000;
+      }
+      input::-webkit-input-placeholder {
+        color: #BBBBBB;
+      }
+      input::-moz-placeholder {   /* Mozilla Firefox 19+ */
+        color: #BBBBBB;
+      }
+      input:-moz-placeholder {    /* Mozilla Firefox 4 to 18 */
+        color: #BBBBBB;
+      }
+      input:-ms-input-placeholder {  /* Internet Explorer 10-11 */ 
+        color: #BBBBBB;
+      }           
+    }
+  }
 </style>
 
