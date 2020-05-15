@@ -56,3 +56,13 @@ export const getShareMessage = (shareId)=>
         url:'/message/get-share/'+shareId,
         method: 'GET'
     })
+
+export const searchMessage = (channelId,searchKey)=>
+    request({
+        url:'/message/search',
+        method: 'POST',
+        data:{
+            channelId:channelId,
+            keyword:searchKey
+        }
+    })

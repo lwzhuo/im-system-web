@@ -47,8 +47,9 @@
         <add-member ref="addChannelMemberDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName"></add-member>
         <member-list ref="memberListDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" :member-info="memberInfo"></member-list>
         <member-management ref="memberManagementDlg" :channel-id="userChannel.channelId" :channel-name="userChannel.channelName" @onOpenAddMemberDlg="doOpenAddMemberDlg"></member-management>
+        <message-search-res-list ref="messageSearchResList" :message-search-res="messageSearchRes" :member-info="memberInfo"></message-search-res-list>
         <div class="channel-search-container">
-          <div class="search"><input type="text" placeholder="搜索聊天记录" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchChannel"></i></div>
+          <div class="search"><input type="text" placeholder="搜索聊天记录" v-model="searchKey" @keyup="onSearchInputKeyUp"><i class="el-icon-search" @click="doSearchMessage"></i></div>
         </div>
         <!-- 成员管理 -->
         <div v-if="userChannel.channelType === 2" class="members-container" @click="showMemberList">
@@ -82,6 +83,7 @@
 <script>
 import { outputError } from '@/utils/exception'
 import { getUserChannel, isAdmin, leaveChannel, removeChannel } from '@/api/channel'
+import { searchMessage} from '@/api/message'
 import StatusOnlineIcon from '@/components/svg/statusOnlineIcon'
 import StatusOfflineIcon from '@/components/svg/statusOfflineIcon'
 import StatusAwayIcon from '@/components/svg/statusAwayIcon'
@@ -100,7 +102,8 @@ export default {
       isAdmin: false,
       searchKey: '',
       myId: JSON.parse(localStorage.getItem('currentUser')).id,
-      myName: JSON.parse(localStorage.getItem('currentUser')).username
+      myName: JSON.parse(localStorage.getItem('currentUser')).username,
+      messageSearchRes:[] // 查询的消息结果 
     }
   },
   methods: {
@@ -259,32 +262,30 @@ export default {
     closeShareMessageCheckbox(){
       this.shareMessageCheckbox = false
     },
-    doSearchChannel() {
+    // 搜索
+    doSearchMessage() {
       if(!this.searchKey.trim()) {
         return
       }
       this.userChannelList = []
-      searchUserChannel(this.userInfo.id, this.searchKey)
+      searchMessage(this.$route.params.channelId, this.searchKey)
       .then(response => {
-        this.userChannelList = response.data
+        if(response.data.code<0){
+          outputError(this, "服务异常")
+        }
+        this.messageSearchRes = response.data.data
+        this.$refs.messageSearchResList.$emit('openDialog', this.messageSearchRes)
       })
       .catch(error => {
         outputError(this, error)
       })        
     },
+    // 搜索回车按键检测
     onSearchInputKeyUp(event) {
       if(!this.searchKey.trim()) {
-        listUserChannels(this.userInfo.id, USER_CHANNEL_LIST_SIZE)
-        .then(response => {
-          this.userChannelList = response.data
-        })
-        .catch(error => {
-          outputError(this, error)
-        })
-        return
-      }
-      if(event.keyCode === 13) {
-        this.doSearchChannel()
+        if(event.keyCode === 13) {
+          this.doSearchChannel()
+        }
       }
     },
   },
@@ -301,6 +302,7 @@ export default {
     MemberList: resolve => require(['@/components/channel/memberList'], resolve),
     MemberManagement: resolve => require(['@/components/channel/manageMember'], resolve),
     ShareList: resolve => require(['@/components/channel/shareList'],resolve),
+    messageSearchResList: resolve => require(['@/components/message/messageSearchResList'],resolve),
   }
 }
 </script>
