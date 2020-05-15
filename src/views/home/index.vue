@@ -100,8 +100,9 @@
                   <div class="status">
                     <status-online-icon v-if="item.toUserOnlineStatus === 'online'"></status-online-icon>
                     <status-away-icon v-else-if="item.toUserOnlineStatus === 'away'"></status-away-icon>
+                    <status-dnd-icon v-else-if="item.toUserOnlineStatus === 'dnd'"></status-dnd-icon>
                     <status-offline-icon v-else-if="item.toUserOnlineStatus === 'offline'"></status-offline-icon>
-                    <status-dnd-icon v-else="item.toUserOnlineStatus === 'dnd'"></status-dnd-icon>
+                    <status-unknow-icon v-else></status-unknow-icon>
                   </div>
                   <div :class="{'channel-item-name channel-item-name-selected' : selectedChannelId === item.channelId, 'channel-item-name': selectedChannelId !== item.channelId}">{{ item.channelName }}</div>
                   <!-- <div :class="{'unread-message-count': item.unreadMessageCount > 0, 'unread-message-count-hide': item.unreadMessageCount == 0}">{{ item.unreadMessageCount > 0 ? item.unreadMessageCount : "" }}</div> -->
@@ -129,6 +130,16 @@ import { listUserChannels, getUserChannel} from '@/api/channel'
 import { IMClient } from '@/im_client/im_client'
 import GroupIcon from '@/components/svg/groupIcon'
 import { logout } from '@/api/auth'
+import StatusOnlineIcon from '@/components/svg/statusOnlineIcon'
+import StatusOfflineIcon from '@/components/svg/statusOfflineIcon'
+import StatusAwayIcon from '@/components/svg/statusAwayIcon'
+import StatusDndIcon from '@/components/svg/statusDndIcon'
+import StatusUnknowIcon from '@/components/svg/statusUnknowIcon'
+import StatusOnlineAvatar from '@/components/svg/statusOnlineAvatar'
+import StatusOfflineAvatar from '@/components/svg/statusOfflineAvatar'
+import StatusDndAvatar from '@/components/svg/statusDndAvatar'
+import StatusAwayAvatar from '@/components/svg/statusAwayAvatar'
+
 
 const USER_CHANNEL_LIST_SIZE = 16 // todo 配置文件
 export default {
@@ -532,6 +543,8 @@ export default {
     }
   },
   components: { 
+    GroupIcon,StatusOnlineIcon, StatusOfflineIcon, StatusAwayIcon, 
+    StatusDndIcon, StatusUnknowIcon,StatusOnlineAvatar, StatusOfflineAvatar, StatusAwayAvatar, StatusDndAvatar,
     CreatePrivateChannel: resolve => require(['@/components/channel/createPrivateChannel'], resolve),
     CreateGroupChannel: resolve => require(['@/components/channel/createGroupChannel'], resolve),
     EditPersonalInfo: resolve => require(['@/components/user/editPersonalInfo'], resolve),
