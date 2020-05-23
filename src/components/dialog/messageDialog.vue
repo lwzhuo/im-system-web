@@ -144,7 +144,7 @@ export default {
         for(let i=0;i<this.userChannel.channelUserList.length;i++){
           let item = this.userChannel.channelUserList[i]
           let uid = item.uid;
-          if(item.status==1)
+          if(item.status==1) // 判断用户状态 用户在channel中的才计数
             this.memberCount++
           this.memberInfo[uid] = {
             uid:uid,
@@ -169,9 +169,30 @@ export default {
         this.userChannel.memberCount += message.count
       }
     },
+    onJoinChannel(message){
+      if(this.$route.params.channelId === message.channelId) {
+        this.memberCount++
+        this.memberInfo[message.fromUid] = {
+          uid:message.fromUid,
+          username:message.userName,
+          avatarUrl:"",
+          userType:message.userType,
+          status:1
+        }
+      }
+    },
+    onLeftChannel(message){
+      if(this.$route.params.channelId === message.channelId) {
+        console.log("member left")
+        this.memberCount--
+        this.memberInfo[message.fromUid].status = 2
+      }
+    },
     initIMClient() {
       let st = setTimeout(() =>  {
         let imClient = this.$store.getters.imClient // 从vuex中获取已经初始化好的client
+        imClient.bindJoinChannel(this.onJoinChannel)
+        imClient.bindLeaveChannel(this.onLeftChannel)
         if(imClient != null) {
           imClient.bindMembersCountChanged(this.onMembersCountChanged)
           clearTimeout(st)

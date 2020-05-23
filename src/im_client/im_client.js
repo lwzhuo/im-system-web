@@ -172,7 +172,7 @@ export class IMClient {
           this.handleReadMessage(message)
         }
         break
-      case "JOIN_CHANNEL":
+      case actionMap.JOIN_CHANNEL:
         if(this.handleJoinChannel) {
           this.handleJoinChannel(message)
         }
@@ -197,7 +197,7 @@ export class IMClient {
           this.handleRemoveFromChannel(message)
         }
         break
-      case "LEAVE_CHANNEL":
+      case actionMap.LEFT_CHANNEL:
         if(this.handleLeaveChannel) {
           this.handleLeaveChannel(message)
         }
