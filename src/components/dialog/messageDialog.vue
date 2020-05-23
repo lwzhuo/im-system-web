@@ -71,7 +71,7 @@
     </div>
     <div class="body-container" v-if="$store.getters.imClient">
       <div class="body">
-        <message-list ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel" :member-info="memberInfo" :share-message-checkbox="shareMessageCheckbox" @onCloseShareMessageCheckbox="closeShareMessageCheckbox"></message-list>
+        <message-list v-if="loadMessageList" ref="messageList" :channel-id="$route.params.channelId" :user-channel="userChannel" :member-info="memberInfo" :share-message-checkbox="shareMessageCheckbox" @onCloseShareMessageCheckbox="closeShareMessageCheckbox"></message-list>
       </div>
     </div>
     <div class="footer">
@@ -93,6 +93,7 @@ import SendMessage from '../message/sendMessage'
 export default {
   data() {
     return {
+      loadMessageList:false,
       shareMessageCheckbox:false,
       loadingVisible: false,
       memberCount:0,
@@ -112,6 +113,7 @@ export default {
     },
     // 初始化页面
     initPage() {
+      this.loadMessageList = false
       if(this.$route.params.channelId === undefined) {
         return
       }
@@ -155,6 +157,7 @@ export default {
           }
         }
         this.loadingVisible = false
+        this.loadMessageList = true
       })
       .catch(error => {
         this.loadingVisible = false
