@@ -27,11 +27,13 @@
               <el-checkbox v-if="shareMessageCheckbox" :label="item.messageId"></el-checkbox> 
               <span :class="[{ 'sender-myself': myId == item.fromUid },{'sender':myId != item.fromUid}]">{{ item.fromUserName ? item.fromUserName :memberInfo[item.fromUid].username }}</span>
               <span :class="[{ 'createAt-myself': myId == item.fromUid },{'createAt':myId != item.fromUid}]">{{ getCreateDateTime(item) }}</span>
+              <div class="clear-float"></div>         
             </div>
             <!-- <span v-if="myId == item.fromUid" class="delete-message" @click="removeMessage(item.id, index)">删除</span> -->
             <!-- 处理不同的消息类型 文本 图片 文件 -->
             <div v-if="item.msgType === 1" :class="[{'content-myself': myId == item.fromUid, 'content': myId !== item.fromUid}, {'system-content': item.channelType==3}]" >
               <span v-text="item.msg" class="content-text"></span>
+              <div class="clear-float"></div>
             </div>
             <template v-else>
               <div v-if="isImage(item.msg.fileExtension)"><img class="image-file" @click="viewImage(getFileUrl(item.msg.filePath, item.msg.newFileName,item.msg.origionFileName, item.msg.fileMimeType), item.imageWidth, item.imageHeight)" :width="item.imageThumbWidth" :height="item.imageThumbHeight" :src="getFileUrl(item.msg.filePath, item.msg.newFileName+'_small',item.msg.origionFileName, item.msg.fileMimeType)"></div>
@@ -356,6 +358,7 @@ export default {
     font-weight: bold;
     float: left;
     margin-right: 6px;
+    margin-left: 6px;
     cursor: pointer;
     .status-wrapper-image {
       border-radius: 100%;
@@ -377,7 +380,7 @@ export default {
     float: right;
   }
   .message-content {
-    padding: 0 0 0 35px;
+    padding: 0 0 0 43px;
     .sender {
       text-overflow: ellipsis;
       cursor: pointer;
@@ -443,7 +446,7 @@ export default {
     }
   }
   .message-content-myself {
-    padding: 0 35px 0 0;
+    padding: 0 43px 0 0;
     .delete-message {
       color: #1A6CDE;
       cursor: pointer;
@@ -452,20 +455,21 @@ export default {
       display: none;
     }
     .sender-myself {
+      float: right;
       text-overflow: ellipsis;
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
     }
     .createAt-myself {
+      float: right;
       font-size: 12px;
       color: #8F8B86;
-      padding: 0 0 0 10px;
-      margin-top: -2px;
+      margin-top: 2px;
       padding-right: 10px;
     }
     .content-myself {
-      padding: 6px 15px 6px 3px;
+      padding: 6px 3px 6px 15px;
       line-height: 25px;
       .content-text{
         float: right;
