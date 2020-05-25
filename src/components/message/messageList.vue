@@ -5,9 +5,9 @@
     <div :id="'message_' + item.messageId" v-for="(item, index) in this.messageList" :key="item.messageId">
       <el-checkbox-group v-model="shareMessageList">
       <div class="message-container">
-        <div class="message">
-          <el-checkbox v-if="shareMessageCheckbox" :label="item.messageId"></el-checkbox> 
-          <div class="status-wrapper" :class="{'sysuser-status-wrapper': item.fromUid === '00000000000000000000000000000000'}">
+        <div :class="[{'message-myself': myId == item.fromUid, 'message': myId !== item.fromUid}]">
+          
+          <div class="status-wrapper" :class="[{'sysuser-status-wrapper': item.fromUid === '00000000000000000000000000000000'},{'status-wrapper-myself':myId == item.fromUid}]">
             <!-- 用户头像显示 -->
             <div v-if="memberInfo[item.fromUid].avatarUrl!=null&&memberInfo[item.fromUid].avatarUrl!==''" style="width: 32px; height:32px;"><img class="status-wrapper-image" :src="getAvatarUrl(item)" /></div>
             <!-- <template v-else>{{ item.senderFirstLetterOfName.toUpperCase() }}</template> -->
@@ -22,12 +22,17 @@
               <status-dnd-avatar v-else="item.senderOnlineStatus === 'dnd'"></status-dnd-avatar> -->
             </div>
           </div>
-          <div class="message-content" :class="{ 'message-content-myself': myId == item.fromUid }">
-            <span class="sender">{{ item.fromUserName ? item.fromUserName :memberInfo[item.fromUid].username }}</span>
-            <span class="createAt">{{ getCreateDateTime(item) }}</span>
+          <div :class="[{ 'message-content-myself': myId == item.fromUid },{'message-content':myId != item.fromUid}]">
+            <div>
+              <el-checkbox v-if="shareMessageCheckbox" :label="item.messageId"></el-checkbox> 
+              <span :class="[{ 'sender-myself': myId == item.fromUid },{'sender':myId != item.fromUid}]">{{ item.fromUserName ? item.fromUserName :memberInfo[item.fromUid].username }}</span>
+              <span :class="[{ 'createAt-myself': myId == item.fromUid },{'createAt':myId != item.fromUid}]">{{ getCreateDateTime(item) }}</span>
+            </div>
             <!-- <span v-if="myId == item.fromUid" class="delete-message" @click="removeMessage(item.id, index)">删除</span> -->
             <!-- 处理不同的消息类型 文本 图片 文件 -->
-            <div v-if="item.msgType === 1" :class="[{'content-select': myId == item.fromUid, 'content': myId !== item.fromUid}, {'system-content': item.channelType==3}]" v-text="item.msg"></div>
+            <div v-if="item.msgType === 1" :class="[{'content-myself': myId == item.fromUid, 'content': myId !== item.fromUid}, {'system-content': item.channelType==3}]" >
+              <span v-text="item.msg" class="content-text"></span>
+            </div>
             <template v-else>
               <div v-if="isImage(item.msg.fileExtension)"><img class="image-file" @click="viewImage(getFileUrl(item.msg.filePath, item.msg.newFileName,item.msg.origionFileName, item.msg.fileMimeType), item.imageWidth, item.imageHeight)" :width="item.imageThumbWidth" :height="item.imageThumbHeight" :src="getFileUrl(item.msg.filePath, item.msg.newFileName+'_small',item.msg.origionFileName, item.msg.fileMimeType)"></div>
               <div v-else-if="isGif(item.msg.fileExtension)"><img class="image-file" @click="viewImage(getFileUrl(item.msg.filePath, item.msg.newFileName,item.msg.origionFileName, item.msg.fileMimeType), item.imageWidth, item.imageHeight)" :width="item.imageWidth" :height="item.imageHeight" :src="getFileUrl(item.msg.filePath, item.msg.newFileName+'_small',item.msg.origionFileName, item.msg.fileMimeType)"></div>
@@ -319,12 +324,22 @@ export default {
   }
   .message-container {
     max-width: 100%;
+    min-width: 20%;
     width: 100%;
     word-wrap: break-word;
     .message {
+      float: left;
       margin: 0 auto;
       padding: 10px 20px 5px 20px;
-      width: 100%;
+      max-width: 45%;
+      min-width: 20%;
+    }
+    .message-myself {
+      float: right;
+      margin: 0 auto;
+      padding: 10px 20px 5px 20px;
+      max-width: 45%;
+      min-width: 20%;
     }
   }
   .message-container:hover {
@@ -358,6 +373,9 @@ export default {
   .sysuser-status-wrapper {
     background-color: #04549C;
   }
+  .status-wrapper-myself {
+    float: right;
+  }
   .message-content {
     padding: 0 0 0 35px;
     .sender {
@@ -374,17 +392,22 @@ export default {
       margin-top: -2px;
     }
     .content {
-      padding: 6px 26px 6px 3px;
+      padding: 6px 15px 6px 3px;
       line-height: 25px;
+      .content-text{
+        padding: 10px 15px 10px 15px;
+        display:inline-block;
+        background-color: #EFEFEF; 
+        // 边框圆滑
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -o-border-radius: 5px;
+      }
     }
     .system-content {
       font-size: 14px;
       color: #908C87;      
-    }
-    .content-select {
-      padding: 6px 36px 6px 3px;
-      line-height: 25px;
-      background-color: #F6F5F4;
     }
     .image-file {
       margin-top: 3px;
@@ -420,12 +443,78 @@ export default {
     }
   }
   .message-content-myself {
+    padding: 0 35px 0 0;
     .delete-message {
       color: #1A6CDE;
       cursor: pointer;
       margin-left: 10px;
       font-size: 13px;
       display: none;
+    }
+    .sender-myself {
+      text-overflow: ellipsis;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .createAt-myself {
+      font-size: 12px;
+      color: #8F8B86;
+      padding: 0 0 0 10px;
+      margin-top: -2px;
+      padding-right: 10px;
+    }
+    .content-myself {
+      padding: 6px 15px 6px 3px;
+      line-height: 25px;
+      .content-text{
+        float: right;
+        padding: 10px 15px 10px 15px;
+        background-color:	#F0F8FF;
+        // 边框圆滑
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -o-border-radius: 5px;
+      }
+    }
+    .system-content {
+      font-size: 14px;
+      color: #908C87;      
+    }
+    .image-file {
+      float: right;
+      margin-top: 3px;
+      cursor: pointer;      
+    }
+    .attach-file {
+      float: right;
+      margin-top: 3px;
+      margin-left: 2px;
+      width: 280px;
+      height: 64px;
+      line-height: 64px;
+      vertical-align: middle;
+      border: solid 1px #DCDAD6;
+      svg {
+        float: left;
+        border-right: solid 1px #DCDAD6;
+      }
+      .attach-desc {
+        padding-left: 5px;
+        width: 205px;
+        line-height: 32px;
+        color: #464548;
+        font-size: 23px;
+        float:left;
+        div {
+          font-size: 13px;
+        }        
+        span {
+          font-size: 13px;
+          color: #8F8B86;
+        }
+      }
     }
   }
   .message-content-myself:hover .delete-message {
@@ -444,6 +533,11 @@ export default {
 
 <style lang="scss">
   .message{
+    .el-checkbox__label{
+        display: none;
+      }
+  }
+  .message-myself{
     .el-checkbox__label{
         display: none;
       }
