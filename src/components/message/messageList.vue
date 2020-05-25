@@ -23,8 +23,8 @@
             </div>
           </div>
           <div :class="[{ 'message-content-myself': myId == item.fromUid },{'message-content':myId != item.fromUid}]">
-            <div>
-              <el-checkbox v-if="shareMessageCheckbox" :label="item.messageId"></el-checkbox> 
+            <div class="message-content-header">
+              <el-checkbox v-if="shareMessageCheckbox" :label="item.messageId" :class="[{ 'message-checkbox-myself': myId == item.fromUid },{'message-checkbox':myId != item.fromUid}]"></el-checkbox> 
               <span :class="[{ 'sender-myself': myId == item.fromUid },{'sender':myId != item.fromUid}]">{{ item.fromUserName ? item.fromUserName :memberInfo[item.fromUid].username }}</span>
               <span :class="[{ 'createAt-myself': myId == item.fromUid },{'createAt':myId != item.fromUid}]">{{ getCreateDateTime(item) }}</span>
               <div class="clear-float"></div>         
@@ -386,13 +386,17 @@ export default {
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
-      display: inline-block;   
+      display: inline-block; 
+      padding-left: 5px;  
     }
     .createAt {
       font-size: 12px;
       color: #8F8B86;
       padding: 0 0 0 10px;
       margin-top: -2px;
+    }
+    .message-checkbox{
+      float: left;
     }
     .content {
       padding: 6px 15px 6px 3px;
@@ -460,6 +464,7 @@ export default {
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
+      padding-right: 5px;
     }
     .createAt-myself {
       float: right;
@@ -468,8 +473,11 @@ export default {
       margin-top: 2px;
       padding-right: 10px;
     }
+    .message-checkbox-myself{
+      float: right;
+    }
     .content-myself {
-      padding: 6px 3px 6px 15px;
+      padding: 0px 3px 6px 15px;
       line-height: 25px;
       .content-text{
         float: right;
@@ -536,12 +544,7 @@ export default {
 </style>
 
 <style lang="scss">
-  .message{
-    .el-checkbox__label{
-        display: none;
-      }
-  }
-  .message-myself{
+  .message-content-header{
     .el-checkbox__label{
         display: none;
       }
