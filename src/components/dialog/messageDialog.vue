@@ -170,6 +170,7 @@ export default {
       }
     },
     onJoinChannel(message){
+      // 成员列表更新
       if(this.$route.params.channelId === message.channelId) {
         this.memberCount++
         this.memberInfo[message.fromUid] = {
@@ -180,12 +181,20 @@ export default {
           status:1
         }
       }
+      // 聊天列表更新
+      if(this.myId===message.fromUid){
+        // todo
+      }
     },
     onLeftChannel(message){
+      // 成员列表更新
       if(this.$route.params.channelId === message.channelId) {
-        console.log("member left")
         this.memberCount--
         this.memberInfo[message.fromUid].status = 2
+      }
+      // 聊天列表更新
+      if(this.myId===message.fromUid){
+        // todo
       }
     },
     initIMClient() {
