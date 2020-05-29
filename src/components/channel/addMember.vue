@@ -6,7 +6,7 @@
         <div class="title">选择组成员</div>
         <div class="search-container">
           <input type="text" placeholder="搜索" v-model="searchParams.username" @keyup="onSearchInputKeyUp">
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="doSearch"></i>          
+          <i slot="suffix" class="el-input__icon el-icon-search" @click="doSearch" style="float:right;"></i>          
         </div>
         <ul>
           <li v-for="(item, index) in this.userList" @click="selectUser(item, index)">{{ item.username }}<span>+</span></li>
