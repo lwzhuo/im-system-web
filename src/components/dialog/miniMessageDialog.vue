@@ -13,15 +13,8 @@
     </div>
     <div class="body-container" v-if="$store.getters.imClient">
       <div class="body">
-        <message-list ref="messageList" :channel-id="channelId" :user-channel="userChannel" :member-info="memberInfo" :useShareMsg="true" :shareMsg="shareMsg"></message-list>
+        <message-list v-if="loadMessageList" ref="messageList" :channel-id="channelId" :user-channel="userChannel" :member-info="memberInfo" :useShareMsg="true" :shareMsg="shareMsg"></message-list>
       </div>
-    </div>
-    <div class="footer">
-      <!-- 分享确认框 -->
-      <ul class="ul">
-        <!-- <li class="sharesubmit"><share-submit></share-submit></li> -->
-        <!-- <li class="sendmessage"><send-message :channel-id="channelId" :channel-type="channelType" @onMessageSent="showSentMessage"></send-message></li> -->
-      </ul>
     </div>
   </div>
 </template>
@@ -39,6 +32,7 @@ import SendMessage from '../message/sendMessage'
 export default {
   data() {
     return {
+      loadMessageList:false,
       loadingVisible: false,
       memberCount:0,
       userChannel: {},  // 维护channel的信息
@@ -60,6 +54,7 @@ export default {
     },
     // 初始化页面
     initPage() {
+      this.loadMessageList = false
       if(this.$route.params.shareId=== undefined) {
         return
       }
@@ -117,6 +112,7 @@ export default {
             }
           }
           this.loadingVisible = false
+          this.loadMessageList = true
         })
         .catch(error => {
           this.loadingVisible = false

@@ -34,7 +34,7 @@ export default {
       channelId:this.userChannel.channelId,
       channelName:this.userChannel.channelName,
       channelSummary:this.userChannel.summary,
-      url:'http://localhost:8081/#/join/',
+      url:'http://im-system.com:8081/#/join/',
     }
   },
   methods: {
@@ -56,6 +56,9 @@ export default {
       this.$on('openDialog', function(action) {
         this.page='home'
         this.title="分享"
+        this.channelId=this.userChannel.channelId,
+        this.channelName=this.userChannel.channelName,
+        this.channelSummary=this.userChannel.summary,
         this.dialogVisible = true
       })
     })
